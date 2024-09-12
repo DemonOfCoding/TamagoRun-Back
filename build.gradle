@@ -50,7 +50,6 @@ dependencies {
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'io.lettuce.core:lettuce-core'
 
 	// email
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
