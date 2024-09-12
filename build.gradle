@@ -43,7 +43,7 @@ dependencies {
 	// JWT 및 시큐리티 관련 의존성
 //	implementation 'org.springframework.boot:spring-boot-starter-security' // Spring Security
 
-	implementation 'io.lettuce.core:lettuce-core:6.2.4'
+	implementation 'io.lettuce.core:lettuce-core:6.1.5'
 
 	implementation 'javax.xml.bind:jaxb-api:2.3.1'
 	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
