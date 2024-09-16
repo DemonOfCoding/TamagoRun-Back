@@ -18,16 +18,12 @@ public class Running {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private double dailyRunningDistance;
 
-    @Column(nullable = false)
     private int dailyRunningTime;
 
-    @Column(nullable = false)
     private Timestamp pacePerKm;
 
-    @Column(nullable = false)
     private int calorie;
 
     @OneToMany(mappedBy = "running")

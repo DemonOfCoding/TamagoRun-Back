@@ -17,10 +17,8 @@ public class ScheduleRecord {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private int finalTime;
 
-    @Column(nullable = false)
     private double finalDistance;
 
     @ManyToOne

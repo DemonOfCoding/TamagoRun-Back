@@ -17,16 +17,12 @@ public class Mission {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
     private boolean missionStatus;
 
-    @Column(nullable = false)
     private long missionAward;
 
     // 이메일 인증

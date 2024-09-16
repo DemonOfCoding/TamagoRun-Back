@@ -17,7 +17,6 @@ public class Friendship {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private List<Boolean> relation;
 
     @ManyToOne

@@ -15,13 +15,10 @@ public class GameCharacter {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private int kindOfCharacter;
 
-    @Column(nullable = false)
     private int evolutionCondition;
-
-    @Column(nullable = false)
+    
     private int characterLevel;
 
     @ManyToOne

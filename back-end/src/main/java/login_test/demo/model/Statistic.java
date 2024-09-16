@@ -15,10 +15,8 @@ public class Statistic {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    @Column(nullable = false)
     private int weeklyChart;
 
-    @Column(nullable = false)
     private int monthChart;
 
     @ManyToOne
