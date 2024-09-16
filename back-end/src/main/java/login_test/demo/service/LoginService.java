@@ -5,6 +5,7 @@ import login_test.demo.model.User;
 import login_test.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -14,6 +15,7 @@ public class LoginService {
     private final MailSendService mailSendService;
 
     //회원가입
+    @Transactional
     public boolean signUp(User user) {
 
         System.out.println("User Details - Login ID: " + user.getLoginId() + ", Password: " + user.getPassword() + ", Email: " + user.getEmail());
