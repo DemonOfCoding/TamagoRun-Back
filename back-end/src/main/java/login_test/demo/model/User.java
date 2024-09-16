@@ -25,8 +25,10 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    // 총 뛴 시간
     private int totalRunningTime;
 
+    // 총 뛴 거리
     private double totalRunningDistance;
 
     // 연속으로 뛴 일수
@@ -38,6 +40,7 @@ public class User {
     // 완료 미션
     private int clearMission;
 
+    // 총 칼로리
     private int totalCalorie;
 
     // 전체 평균 페이스
