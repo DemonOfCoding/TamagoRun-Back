@@ -14,11 +14,11 @@ public class GameCharacter {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
-
+    
     private int kindOfCharacter;
 
     private int evolutionCondition;
-    
+
     private int characterLevel;
 
     @ManyToOne
