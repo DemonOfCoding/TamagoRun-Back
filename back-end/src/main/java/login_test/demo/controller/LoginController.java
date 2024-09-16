@@ -26,6 +26,7 @@ public class LoginController {
     //이메일 전송 (회원가입) || (비번 찾기)
     @PostMapping("/requestEmail")
     public ResponseEntity<String> requestEmail(@RequestBody EmailRequestDto emailRequestDto, HttpSession session) {
+
         String email = emailRequestDto.getEmail();
 
         boolean emailExists = userRepository.existsByEmail(email);
@@ -33,6 +34,8 @@ public class LoginController {
         if (emailExists) {
             return ResponseEntity.status(400).body("이미 존재하는 이메일 입니다.");
         }
+
+
         // 이메일로 인증 코드 전송
         String authCode = mailSendService.joinEmail(emailRequestDto.getEmail());
 
