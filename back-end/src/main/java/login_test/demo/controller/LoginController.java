@@ -46,6 +46,7 @@ public class LoginController {
         return ResponseEntity.ok("이메일로 인증 코드를 발송했습니다.");
     }
 
+    // 비밀번호 찾기할 때
     @PostMapping("/requestSetPassword")
     public ResponseEntity<String> requestSetPassword(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
         String loginId = loginRequestDto.getLoginId();
