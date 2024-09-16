@@ -1,6 +1,8 @@
 package login_test.demo.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import login_test.demo.dto.ConfirmSetPasswordDto;
 import login_test.demo.dto.EmailCheckDto;
@@ -10,6 +12,7 @@ import login_test.demo.model.User;
 import login_test.demo.repository.UserRepository;
 import login_test.demo.service.LoginService;
 import login_test.demo.service.MailSendService;
+import login_test.demo.service.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +25,7 @@ public class LoginController {
     private final LoginService loginService;
     private  final MailSendService mailSendService;
     private final UserRepository userRepository;
+    private final RedisUtil redisUtil;
 
     //이메일 전송 (회원가입) || (비번 찾기)
     @PostMapping("/requestEmail")
@@ -30,7 +34,6 @@ public class LoginController {
         String email = emailRequestDto.getEmail();
 
         boolean emailExists = userRepository.existsByEmail(email);
-
         if (emailExists) {
             return ResponseEntity.status(400).body("이미 존재하는 이메일 입니다.");
         }
@@ -108,14 +111,15 @@ public class LoginController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequest, HttpServletRequest request) {
 
-        System.out.println(loginRequest.getEmail() + loginRequest.getPassword() + loginRequest.getLoginId());
-
         if (loginService.login(loginRequest.getLoginId(), loginRequest.getPassword())) {
-            System.out.println(loginRequest.getLoginId());
-
             //세션 생성 및 저장
             HttpSession session = request.getSession();
             session.setAttribute("userLogin", loginRequest.getLoginId());
+
+            //세션 유지 기간 설정(30일)
+            session.setMaxInactiveInterval(30 * 24 * 60 * 60);
+            redisUtil.setData(session.getId(), loginRequest.getLoginId());
+
             return ResponseEntity.ok("로그인 성공, 세션 ID" + session.getId());
         }
         else {
@@ -129,6 +133,26 @@ public class LoginController {
         loginService.logout(session);
         return ResponseEntity.ok("로그아웃 성공");
     }
+
+    //checkSession
+    @GetMapping("/checkSession")
+    public ResponseEntity<String> checkSession(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+
+        if (session != null && session.getAttribute("userLogin") != null){
+            String loginId = (String) session.getAttribute("userLogin");
+
+            User user = userRepository.findByLoginId(loginId);
+            if (user != null) {
+                return ResponseEntity.ok("현재 로그인된 사용자: " + user.getLoginId());
+            } else {
+                return ResponseEntity.status(404).body("사용자를 찾을 수 없습니다.");
+            }
+        } else {
+            return ResponseEntity.status(401).body("로그인되지 않은 상태압니다.");
+        }
+    }
+
 
     // 1. 아이디 중복 확인
     @GetMapping("/checkLoginId/{loginId}")
