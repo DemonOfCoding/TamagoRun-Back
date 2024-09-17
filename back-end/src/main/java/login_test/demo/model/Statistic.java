@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -15,9 +17,17 @@ public class Statistic {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    private int weeklyChart;
+    // 주 통계
+    private int weeklyRunningTime;
+    private Timestamp weeklyPacePerKm;
+    private int weeklyRunningDistance;
+    private int weeklyCalorie;
 
-    private int monthChart;
+    // 월 통계
+    private int monthlyRunningTime;
+    private Timestamp monthlyPacePerKm;
+    private int monthlyRunningDistance;
+    private int monthlyCalorie;
 
     @ManyToOne
     @JoinColumn(name = "scheduleRecord_id", nullable = false)
