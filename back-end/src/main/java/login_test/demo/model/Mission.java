@@ -24,7 +24,7 @@ public class Mission {
     private String content;
 
     // 미션 클리어 상태
-    private boolean missionStatus = false;
+    private boolean missionStatus;
     // 미션 보상
     private int missionReward;
 

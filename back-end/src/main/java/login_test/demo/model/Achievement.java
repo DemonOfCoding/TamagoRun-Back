@@ -21,7 +21,7 @@ public class Achievement {
     private String content;
 
     // 업적 상태
-    private boolean achievementStatus = false;
+    private boolean achievementStatus;
     // 업적 보상
     private int achievementReward;
 
