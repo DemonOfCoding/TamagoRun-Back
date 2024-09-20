@@ -2,6 +2,7 @@ package login_test.demo.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Mission {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +24,7 @@ public class Mission {
     private String content;
 
     // 미션 클리어 상태
-    private boolean missionStatus;
+    private boolean missionStatus = false;
     // 미션 보상
     private int missionReward;
 

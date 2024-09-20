@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("mypage")
+@RequestMapping("/mypage")
 public class MypageController {
 
     private final MypageRetrieve mypageRetrieve;

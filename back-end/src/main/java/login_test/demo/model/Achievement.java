@@ -2,6 +2,7 @@ package login_test.demo.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Achievement {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, unique = true, nullable = false)
@@ -19,7 +21,7 @@ public class Achievement {
     private String content;
 
     // 업적 상태
-    private boolean achievementStatus;
+    private boolean achievementStatus = false;
     // 업적 보상
     private int achievementReward;
 
