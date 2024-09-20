@@ -18,7 +18,10 @@ public class Achievement {
 
     private String content;
 
+    // 업적 상태
     private boolean achievementStatus;
+    // 업적 보상
+    private int achievementReward;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
