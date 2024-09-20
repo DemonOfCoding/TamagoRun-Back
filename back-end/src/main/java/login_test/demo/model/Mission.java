@@ -23,8 +23,6 @@ public class Mission {
 
     private boolean missionStatus;
 
-    private long missionAward;
-
     // 이메일 인증
     @Column(nullable = false)
     private boolean emailVerified = false;
