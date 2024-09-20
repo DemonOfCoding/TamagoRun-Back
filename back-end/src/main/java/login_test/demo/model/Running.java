@@ -18,18 +18,9 @@ public class Running {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    private double dailyRunningDistance;
+    // 지도 경로 받을 리스트
+    @ElementCollection
+    @CollectionTable(name = "running_coordinates", joinColumns = @JoinColumn(name = "running_id"))
+    private List<Coordinate> coordinates;
 
-    private int dailyRunningTime;
-
-    private Timestamp pacePerKm;
-
-    private int calorie;
-
-    @OneToMany(mappedBy = "running")
-    private List<ScheduleRecord> scheduleRecords;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
 }

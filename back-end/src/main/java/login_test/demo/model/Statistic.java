@@ -30,10 +30,6 @@ public class Statistic {
     private int monthlyCalorie;
 
     @ManyToOne
-    @JoinColumn(name = "scheduleRecord_id", nullable = false)
-    private ScheduleRecord scheduleRecord;
-
-    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

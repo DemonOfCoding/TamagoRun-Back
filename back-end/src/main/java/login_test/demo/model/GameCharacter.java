@@ -14,6 +14,8 @@ public class GameCharacter {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
+
+    private int experience;
     
     private int kindOfCharacter;
 
