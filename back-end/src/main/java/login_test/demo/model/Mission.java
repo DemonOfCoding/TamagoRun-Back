@@ -28,13 +28,13 @@ public class Mission {
     // 미션 보상
     private int missionReward;
 
-    // 이메일 인증
-    @Column(nullable = false)
-    private boolean emailVerified = false;
-
-    // 이메일 인증 토큰
-    @Column(nullable = false)
-    private String emailVerificationToken;
+//    // 이메일 인증
+//    @Column(nullable = false)
+//    private boolean emailVerified = false;
+//
+//    // 이메일 인증 토큰
+//    @Column(nullable = false)
+//    private String emailVerificationToken;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
