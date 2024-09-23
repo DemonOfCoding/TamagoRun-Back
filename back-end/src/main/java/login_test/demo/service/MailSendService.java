@@ -7,6 +7,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -36,14 +38,22 @@ public class MailSendService {
     // 이메일 전송 후 Redis에 저장
     public String joinEmail(String email) {
         makeRandomNumber(); // 인증번호 생성
-        String setFrom = "opqieywi@gmail.com";
+        String setFrom = "TamagoRun <tjdwls9018@naver.com>";
         String toMail = email;
-        String title = "회원 가입 인증 이메일 입니다.";
+        String title = "타마고런 회원 가입 인증 이메일 입니다.";
+
+        // 현재 시간에 5분을 더한 시간 계산
+        LocalDateTime expiryTime = LocalDateTime.now().plusMinutes(5);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH:mm:ss");
+        String formattedExpiryTime = expiryTime.format(formatter);
+
         String content =
                 "<br><br>" +
-                        "인증 번호는 " + authNumber + "입니다." +
-                        "<br>" +
-                        "인증번호를 제대로 입력해주세요";
+                        "본인 확인을 위한 인증코드가 발급되었습니다." +
+                        "<br><br>" +
+                        "<strong style=\"font-size: 24px;\">인증 번호: " + authNumber + "</strong>" +
+                        "<br><br>" +
+                        "위의 인증번호는 <strong>" + formattedExpiryTime + "</strong>까지 유효합니다. ";
 
         mailSend(setFrom, toMail, title, content);
         redisUtil.setDataExpire(authNumber, email, 300L); // Redis에 5분(300초)간 유효하게 인증번호 저장
