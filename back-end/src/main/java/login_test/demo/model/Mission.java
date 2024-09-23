@@ -28,6 +28,10 @@ public class Mission {
     // 미션 보상
     private int missionReward;
 
+    // 미션 유형 (일일/주간)
+    @Enumerated(EnumType.STRING)
+    private MissionType missionType;
+
 //    // 이메일 인증
 //    @Column(nullable = false)
 //    private boolean emailVerified = false;
@@ -42,4 +46,9 @@ public class Mission {
 
     @OneToMany(mappedBy = "mission")
     private List<GameCharacter> gameCharacters;
+
+    public enum MissionType {
+        DAILY,
+        WEEKLY
+    }
 }
