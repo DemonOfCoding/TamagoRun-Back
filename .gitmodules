@@ -1,6 +1,0 @@
-[submodule "TamagoRun-Back"]
-	path = TamagoRun-Back
-	url = https://github.com/DemonOfCoding/TamagoRun-Back.git
-[submodule "TamagoRun/TamagoRun-Back"]
-	path = TamagoRun/TamagoRun-Back
-	url = https://github.com/DemonOfCoding/TamagoRun-Back.git
