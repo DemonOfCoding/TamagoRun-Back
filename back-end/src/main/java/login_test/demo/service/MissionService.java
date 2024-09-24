@@ -1,95 +1,123 @@
 package login_test.demo.service;
 
-import login_test.demo.dto.AchievementDto;
-import login_test.demo.dto.MissionDto;
-import login_test.demo.model.Achievement;
-import login_test.demo.model.GameCharacter;
-import login_test.demo.model.Mission;
+import login_test.demo.dto.DailyMissionDto;
+import login_test.demo.dto.WeeklyMissionDto;
+import login_test.demo.model.DailyMission;
 import login_test.demo.model.User;
-import login_test.demo.repository.AchievementRepository;
-import login_test.demo.repository.GameCharacterRepository;
-import login_test.demo.repository.MissionRepository;
-import login_test.demo.repository.UserRepository;
+import login_test.demo.model.WeeklyMission;
+import login_test.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class MissionService {
     private final UserRepository userRepository;
-    private final MissionRepository missionRepository;
-    private final AchievementRepository achievementRepository;
-    private final GameCharacterRepository gameCharacterRepository;
+    private final DailyMissionRepository dailyMissionRepository;
+    private final WeeklyMissionRepository weeklyMissionRepository;
 
-    // 미션 추가
-    public void addMission(MissionDto missionDto) {
-        User user = userRepository.findById(missionDto.getUser_id())
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
+    // 일일 미션 평가 (데이터 누적 없음)
+    public void evaluateDailyMissions(Long userId, double distance, int runningTime) {
+        List<DailyMission> missions = dailyMissionRepository.findByUserId(userId);
 
-        Mission mission = Mission.builder()
-                .title(missionDto.getTitle())
-                .content(missionDto.getContent())
-                .missionReward(missionDto.getMissionReward())
-                .missionType(missionDto.getMissionType()) // missionType 추가
-                .user(user)
-                .build();
-
-        missionRepository.save(mission);
-    }
-
-    // 미션 완료 시 경험치 추가
-    public void completeMission(Long missionId, Long characterId) {
-        Mission mission = missionRepository.findById(missionId)
-                .orElseThrow(() -> new IllegalArgumentException("미션을 찾을 수 없습니다."));
-
-        GameCharacter character = gameCharacterRepository.findById(characterId)
-                .orElseThrow(() -> new IllegalArgumentException("캐릭터를 찾을 수 없습니다."));
-
-        if (!mission.isMissionStatus()) { // 미션이 완료되지 않은 경우
-            character.setExperience(character.getExperience() + mission.getMissionReward());
-            mission.setMissionStatus(true); // 미션 상태 업데이트
-            missionRepository.save(mission);
-            gameCharacterRepository.save(character);
+        for (DailyMission mission : missions) {
+            switch (mission.getId().intValue()) {
+                case 1: // 하루에 3Km 이상 뛰기
+                    if (distance >= 3 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                case 2: // 하루에 5Km 이상 뛰기
+                    if (distance >= 5 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                case 3: // 30분 동안 뛰기
+                    if (runningTime >= 30 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                case 4: // 60분 동안 뛰기
+                    if (runningTime >= 60 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
-    // 일일 미션 리셋
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정
+    // 주간 미션 누적 및 평가
+    public void evaluateWeeklyMissions(Long userId, double distance, int runningTime) {
+        List<WeeklyMission> missions = weeklyMissionRepository.findByUserId(userId);
+
+        for (WeeklyMission mission : missions) {
+            mission.setTotalDistance(mission.getTotalDistance() + distance);  // 거리 누적
+            mission.setTotalTime(mission.getTotalTime() + runningTime);      // 시간 누적
+            mission.setRunningCount(mission.getRunningCount() + 1);          // 횟수 누적
+
+            switch (mission.getId().intValue()) {
+                case 1: // 주간 15km 달성
+                    if (mission.getTotalDistance() >= 15 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                case 2: // 주간 30km 달성
+                    if (mission.getTotalDistance() >= 30 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                case 3: // 주간 2번 이상 러닝
+                    if (mission.getRunningCount() >= 2 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                case 4: // 주간 4번 이상 러닝
+                    if (mission.getRunningCount() >= 4 && !mission.isMissionStatus()) {
+                        completeMission(mission);
+                    }
+                    break;
+                default:
+                    break;
+            }
+            // 상태 업데이트 후 저장
+            weeklyMissionRepository.save(mission);
+        }
+    }
+
+    // 일일 미션 완료 처리
+    private void completeMission(DailyMission mission) {
+        mission.setMissionStatus(true); // 상태 업데이트
+        dailyMissionRepository.save(mission); // 저장
+    }
+
+    // 주간 미션 완료 처리
+    private void completeMission(WeeklyMission mission) {
+        mission.setMissionStatus(true); // 상태 업데이트
+        weeklyMissionRepository.save(mission); // 저장
+    }
+
+    // 일일 미션 리셋 (매일 자정)
+    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void resetDailyMissions() {
-        missionRepository.findAll().stream()
-                .filter(mission -> mission.getMissionType() == Mission.MissionType.DAILY)
-                .forEach(mission -> {
-                    mission.setMissionStatus(false); // 상태 리셋
-                    missionRepository.save(mission);
-                });
+        List<DailyMission> missions = dailyMissionRepository.findAll();
+        for (DailyMission mission : missions) {
+            mission.setMissionStatus(false); // 미션 상태를 false로 리셋
+            dailyMissionRepository.save(mission); // 상태 저장
+        }
     }
 
-    // 주간 미션 리셋
-    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 자정
+    // 주간 미션 리셋 (매주 월요일 자정)
+    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 자정에 실행
     public void resetWeeklyMissions() {
-        missionRepository.findAll().stream()
-                .filter(mission -> mission.getMissionType() == Mission.MissionType.WEEKLY)
-                .forEach(mission -> {
-                    mission.setMissionStatus(false); // 상태 리셋
-                    missionRepository.save(mission);
-                });
-    }
-
-
-    // 업적 추가
-    public void addAchievement(AchievementDto achievementDto) {
-
-        User user = userRepository.findById(achievementDto.getUser_id())
-                .orElseThrow(() -> new IllegalArgumentException("유저를 찾을 수 없습니다."));
-
-        Achievement achievement = Achievement.builder()
-                .title(achievementDto.getTitle())
-                .content(achievementDto.getContent())
-                .achievementReward(achievementDto.getAchievementReward())
-                .user(user)
-                .build();
-
-        achievementRepository.save(achievement);
+        List<WeeklyMission> missions = weeklyMissionRepository.findAll();
+        for (WeeklyMission mission : missions) {
+            mission.setMissionStatus(false); // 미션 상태를 false로 리셋
+            weeklyMissionRepository.save(mission); // 상태 저장
+        }
     }
 }

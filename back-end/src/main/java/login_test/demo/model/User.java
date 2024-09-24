@@ -50,7 +50,9 @@ public class User {
     private List<GameCharacter> users;
 
     @OneToMany(mappedBy = "user")
-    private List<Mission> missions;
+    private List<DailyMission> dailyMissions;
+    @OneToMany(mappedBy = "user")
+    private List<WeeklyMission> weeklyMissions;
     @OneToMany(mappedBy = "user")
     private List<Achievement> achievements;
     @OneToMany(mappedBy = "user")
