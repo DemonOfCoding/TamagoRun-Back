@@ -28,6 +28,10 @@ public class GameCharacter {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "mission_id", nullable = false)
-    private Mission mission;
+    @JoinColumn(name = "daily_mission_id", nullable = false)
+    private DailyMission dailymission;
+
+    @ManyToOne
+    @JoinColumn(name = "weekly_mission_id", nullable = false)
+    private WeeklyMission weeklymission;
 }

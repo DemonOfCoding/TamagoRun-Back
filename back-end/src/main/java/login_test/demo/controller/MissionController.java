@@ -1,7 +1,7 @@
 package login_test.demo.controller;
 
-import login_test.demo.dto.AchievementDto;
-import login_test.demo.dto.MissionDto;
+import login_test.demo.dto.DailyMissionDto;
+import login_test.demo.dto.WeeklyMissionDto;
 import login_test.demo.service.MissionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,18 +16,16 @@ public class MissionController {
 
     private final MissionService missionService;
 
-    // 미션 추가 요청
-    @PostMapping("/addMission")
-    public void requestMission(@RequestBody MissionDto missionDto) {
-        missionService.addMission(missionDto);
+    // 일일 미션 평가
+    @PostMapping("/daily")
+    public void evaluateDailyMissions(@RequestBody DailyMissionDto dailyMissionDto) {
+        missionService.evaluateDailyMissions(dailyMissionDto.getUserId(), dailyMissionDto.getDistance(), dailyMissionDto.getRunningTime());
     }
 
-
-    // 업적 추가 요청
-    @PostMapping("/addAchievement")
-    public void requestAchievement(@RequestBody AchievementDto achievementDto) {
-        missionService.addAchievement(achievementDto);
+    // 주간 미션 데이터 누적 및 평가
+    @PostMapping("/weekly")
+    public void accumulateWeeklyData(@RequestBody WeeklyMissionDto weeklyMissionDto) {
+        missionService.evaluateWeeklyMissions(weeklyMissionDto.getUserId(), weeklyMissionDto.getDistance(), weeklyMissionDto.getRunningTime());
     }
-
 
 }
