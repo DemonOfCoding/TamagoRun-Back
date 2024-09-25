@@ -26,12 +26,4 @@ public class GameCharacter {
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "daily_mission_id", nullable = false)
-    private DailyMission dailymission;
-
-    @ManyToOne
-    @JoinColumn(name = "weekly_mission_id", nullable = false)
-    private WeeklyMission weeklymission;
 }
