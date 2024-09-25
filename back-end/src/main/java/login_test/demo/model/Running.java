@@ -30,4 +30,7 @@ public class Running {
     @CollectionTable(name = "running_coordinates", joinColumns = @JoinColumn(name = "running_id"))
     private List<Coordinate> coordinates;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }

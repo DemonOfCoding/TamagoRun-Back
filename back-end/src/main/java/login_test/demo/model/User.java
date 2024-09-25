@@ -57,4 +57,6 @@ public class User {
     private List<Achievement> achievements;
     @OneToMany(mappedBy = "user")
     private List<Statistic> statistics;
+    @OneToMany(mappedBy = "user")
+    private List<Running> runnings;
 }
