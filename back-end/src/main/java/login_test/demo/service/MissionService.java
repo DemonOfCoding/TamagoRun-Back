@@ -1,6 +1,7 @@
 package login_test.demo.service;
 
 import login_test.demo.model.DailyMission;
+import login_test.demo.model.Running;
 import login_test.demo.model.WeeklyMission;
 import login_test.demo.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -12,12 +13,22 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MissionService {
-    private final UserRepository userRepository;
+    private final RunningRepository runningRepository;
     private final DailyMissionRepository dailyMissionRepository;
     private final WeeklyMissionRepository weeklyMissionRepository;
 
     // 일일 미션 평가 (데이터 누적 없음)
-    public void evaluateDailyMissions(Long userId, double distance, int runningTime) {
+    public void evaluateDailyMissions(Long userId) {
+        Running running = runningRepository.findByUserId(userId);
+
+        // 만약 러닝 기록이 없다면 종료
+        if (running == null) {
+            return;
+        }
+
+        double distance = running.getDailyDistance();
+        int runningTime = running.getDailyRunningTime();
+
         List<DailyMission> missions = dailyMissionRepository.findByUserId(userId);
 
         for (DailyMission mission : missions) {
@@ -49,7 +60,17 @@ public class MissionService {
     }
 
     // 주간 미션 누적 및 평가
-    public void evaluateWeeklyMissions(Long userId, double distance, int runningTime) {
+    public void evaluateWeeklyMissions(Long userId) {
+        Running running = runningRepository.findByUserId(userId);
+
+        // 만약 러닝 기록이 없다면 종료
+        if (running == null) {
+            return;
+        }
+
+        double distance = running.getDailyDistance();
+        int runningTime = running.getDailyRunningTime();
+
         List<WeeklyMission> missions = weeklyMissionRepository.findByUserId(userId);
 
         for (WeeklyMission mission : missions) {
