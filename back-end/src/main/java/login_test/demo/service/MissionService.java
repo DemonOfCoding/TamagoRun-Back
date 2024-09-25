@@ -1,9 +1,6 @@
 package login_test.demo.service;
 
-import login_test.demo.dto.DailyMissionDto;
-import login_test.demo.dto.WeeklyMissionDto;
 import login_test.demo.model.DailyMission;
-import login_test.demo.model.User;
 import login_test.demo.model.WeeklyMission;
 import login_test.demo.repository.*;
 import lombok.RequiredArgsConstructor;
