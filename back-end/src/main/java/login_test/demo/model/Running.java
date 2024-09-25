@@ -24,10 +24,13 @@ public class Running {
     @Column(nullable = false, updatable = false)
     private Timestamp createdDate;
 
-    private int dailyRunningTime;
-    private int dailyAveragePace;
-    private int dailyCalorie;
-    private double dailyDistance;
+    private int runningTime;
+    private int averagePace;
+    private int calorie;
+    private double distance;
+
+    // 하루에 몇 번 뛴 것인지 카운트
+    private int runningCount; // 추가
 
     // 지도 경로 받을 리스트
     @ElementCollection

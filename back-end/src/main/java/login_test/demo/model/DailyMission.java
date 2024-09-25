@@ -19,19 +19,12 @@ public class DailyMission {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    private String title;
-
-    private String content;
-
     // 미션 클리어 상태
     private boolean missionStatus;
-    // 미션 보상
-    private int missionReward;
+    private int dailyRunningTime;
+    private double dailyRunningDistance;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @OneToMany(mappedBy = "dailymission")
-    private List<GameCharacter> gameCharacters;
 }

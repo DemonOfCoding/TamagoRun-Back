@@ -18,21 +18,8 @@ public class WeeklyMission {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    private String title;
-
-    private String content;
-
     // 미션 클리어 상태
     private boolean missionStatus;
-
-    // 미션 보상
-    private int missionReward;
-
-    // 주간 누적 거리
-    private double totalDistance;
-
-    // 주간 누적 시간
-    private int totalTime;
 
     // 주간 뛴 횟수
     private int runningCount;
@@ -41,6 +28,7 @@ public class WeeklyMission {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "weeklymission")
-    private List<GameCharacter> gameCharacters;
+    public void incrementRunningCount() {
+        this.runningCount += 1;
+    }
 }
