@@ -19,13 +19,12 @@ public class MissionController {
     // 일일 미션 평가
     @PostMapping("/daily")
     public void evaluateDailyMissions(@RequestBody DailyMissionDto dailyMissionDto) {
-        missionService.evaluateDailyMissions(dailyMissionDto.getUserId(), dailyMissionDto.getDistance(), dailyMissionDto.getRunningTime());
+        missionService.evaluateDailyMissions(dailyMissionDto.getUser_id());
     }
 
     // 주간 미션 데이터 누적 및 평가
     @PostMapping("/weekly")
     public void accumulateWeeklyData(@RequestBody WeeklyMissionDto weeklyMissionDto) {
-        missionService.evaluateWeeklyMissions(weeklyMissionDto.getUserId(), weeklyMissionDto.getDistance(), weeklyMissionDto.getRunningTime());
+        missionService.evaluateWeeklyMissions(weeklyMissionDto.getUser_id());
     }
-
 }
