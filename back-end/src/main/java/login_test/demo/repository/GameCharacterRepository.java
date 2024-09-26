@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface GameCharacterRepository extends JpaRepository<GameCharacter, Long> {
 
     Optional<GameCharacter> findByUserId(Long userId); // userId로 GameCharacter 조회)
+    List<GameCharacter> findAllByUserId(Long userId);
 }
