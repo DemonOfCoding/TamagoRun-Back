@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
@@ -18,17 +16,15 @@ public class WeeklyMission {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    // 미션 클리어 상태
-    private boolean missionStatus;
-
-    // 주간 뛴 횟수
     private int runningCount;
+
+    // 미션 클리어 상태
+    private boolean missionStatus1;
+    private boolean missionStatus2;
+    private boolean missionStatus3;
+    private boolean missionStatus4;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    public void incrementRunningCount() {
-        this.runningCount += 1;
-    }
 }

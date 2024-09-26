@@ -20,7 +20,10 @@ public class DailyMission {
     private Long id;
 
     // 미션 클리어 상태
-    private boolean missionStatus;
+    private boolean missionStatus1;
+    private boolean missionStatus2;
+    private boolean missionStatus3;
+    private boolean missionStatus4;
     private int dailyRunningTime;
     private double dailyRunningDistance;
 

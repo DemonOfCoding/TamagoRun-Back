@@ -28,6 +28,7 @@ public class RunningService {
     public void getRunningData(RunningDto runningDto) {
         // user_id를 통해 유저 프록시 객체를 가져옴
         User user = userRepository.getReferenceById(runningDto.getUser_id());
+        WeeklyMission weeklyMission = weeklyMissionRepository.findByUserId(runningDto.getUser_id());
 
         // 현재 시간을 생성일로 설정
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
@@ -62,11 +63,23 @@ public class RunningService {
             // DailyMission이 없는 경우 새로 생성
             dailyMission = DailyMission.builder()
                     .user(user)
-                    .missionStatus(false) // 초기 상태는 미션 미완료
+                    .missionStatus1(false) // 초기 상태는 미션 미완료
+                    .missionStatus2(false)
+                    .missionStatus3(false)
+                    .missionStatus4(false)
                     .dailyRunningTime(runningDto.getDailyRunningTime())
                     .dailyRunningDistance(runningDto.getDailyDistance())
                     .build();
         } else {
+            if(dailyMission.getDailyRunningTime() == 0 && dailyMission.getDailyRunningDistance() == 0.0)
+            {
+                int updatedCount = weeklyMission.getRunningCount() + 1;
+                weeklyMission.setRunningCount(updatedCount);
+
+                // 변경된 값을 저장
+                weeklyMissionRepository.save(weeklyMission);
+            } // 일일 데이터가 없으면 처음 뛰는 것이므로 러닝 카운터를 1 상승 시킴
+
             // 기존 DailyMission 업데이트
             dailyMission.setDailyRunningTime(dailyMission.getDailyRunningTime() + runningDto.getDailyRunningTime());
             dailyMission.setDailyRunningDistance(dailyMission.getDailyRunningDistance() + runningDto.getDailyDistance());
@@ -77,20 +90,25 @@ public class RunningService {
     }
 
     // 주간 데이터 초기화 (매주 월요일 자정에 실행)
+    // cron (초(0~59), 분(0~59), 시간(0~23), 일(1~31), 월(1~12), 요일(0~7))
     @Scheduled(cron = "0 0 0 * * MON")
     public void resetWeeklyRunningData() {
         List<Running> runningRecords = runningRepository.findAll();
         for (Running running : runningRecords) {
             running.setRunningTime(0);
-            running.setDistance(0);
+            running.setDistance(0.0);
+            running.setCalorie(0);
+            running.setAveragePace(0);
             runningRepository.save(running);
         }
 
         // WeeklyMission 초기화
         List<WeeklyMission> weeklyMissions = weeklyMissionRepository.findAll();
         for (WeeklyMission mission : weeklyMissions) {
-            mission.setRunningCount(0); // runningCount 초기화
-            mission.setMissionStatus(false); // 필요 시 미션 상태도 초기화
+            mission.setMissionStatus1(false); // 필요 시 미션 상태도 초기화
+            mission.setMissionStatus2(false);
+            mission.setMissionStatus3(false);
+            mission.setMissionStatus4(false);
             weeklyMissionRepository.save(mission);
         }
     }

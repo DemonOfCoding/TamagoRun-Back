@@ -29,9 +29,6 @@ public class Running {
     private int calorie;
     private double distance;
 
-    // 하루에 몇 번 뛴 것인지 카운트
-    private int runningCount; // 추가
-
     // 지도 경로 받을 리스트
     @ElementCollection
     @CollectionTable(name = "coordinate", joinColumns = @JoinColumn(name = "running_id"))

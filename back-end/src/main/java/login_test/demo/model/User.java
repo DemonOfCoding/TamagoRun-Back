@@ -35,7 +35,7 @@ public class User {
     private int continuousDate;
 
     // 뛰었는지 체크
-    private boolean runningRecord;
+    private int totalRunningCount;
 
     // 완료 미션
     private int clearMission;
