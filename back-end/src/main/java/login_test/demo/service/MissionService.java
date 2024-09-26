@@ -1,9 +1,6 @@
 package login_test.demo.service;
 
-import login_test.demo.model.DailyMission;
-import login_test.demo.model.Running;
-import login_test.demo.model.User;
-import login_test.demo.model.WeeklyMission;
+import login_test.demo.model.*;
 import login_test.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -15,15 +12,16 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MissionService {
-    private final UserRepository userRepository;
+
     private final RunningRepository runningRepository;
     private final DailyMissionRepository dailyMissionRepository;
     private final WeeklyMissionRepository weeklyMissionRepository;
+    private final GameCharacterRepository gameCharacterRepository;
 
     // 일일 미션 평가
     public void evaluateDailyMissions(Long userId) {
         List<DailyMission> missions = dailyMissionRepository.findByUserId(userId);
-
+        Optional<GameCharacter> gameCharacter = gameCharacterRepository.findByUserId(userId);
         if (missions.isEmpty()) {
             return; // 미션이 없으면 종료
         }
