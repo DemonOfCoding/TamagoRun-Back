@@ -2,19 +2,20 @@ package login_test.demo.service;
 
 import login_test.demo.model.DailyMission;
 import login_test.demo.model.Running;
+import login_test.demo.model.User;
 import login_test.demo.model.WeeklyMission;
 import login_test.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MissionService {
+    private final UserRepository userRepository;
     private final RunningRepository runningRepository;
     private final DailyMissionRepository dailyMissionRepository;
     private final WeeklyMissionRepository weeklyMissionRepository;
@@ -33,33 +34,31 @@ public class MissionService {
 
         // 미션 클리어 평가
         for (DailyMission mission : missions) {
-            switch (mission.getId().intValue()) {
-                case 1:
-                    if (dailyDistance >= 3 && !mission.isMissionStatus()) {
-                        completeDailyMission(mission);
-                    }
-                    break;
-                case 2:
-                    if (dailyDistance >= 5 && !mission.isMissionStatus()) {
-                        completeDailyMission(mission);
-                    }
-                    break;
-                case 3:
-                    if (dailyRunningTime >= 30 && !mission.isMissionStatus()) {
-                        completeDailyMission(mission);
-                    }
-                    break;
-                case 4:
-                    if (dailyRunningTime >= 60 && !mission.isMissionStatus()) {
-                        completeDailyMission(mission);
-                    }
-                    break;
-                default:
-                    break;
+            // 3km 미션 완료 조건
+            if (dailyDistance >= 3 && !mission.isMissionStatus1()) {
+                mission.setMissionStatus1(true);
             }
+
+            // 5km 미션 완료 조건
+            if (dailyDistance >= 5 && !mission.isMissionStatus2()) {
+                mission.setMissionStatus2(true);
+            }
+
+            // 30분 달리기 미션 완료 조건
+            if (dailyRunningTime >= 30 && !mission.isMissionStatus3()) {
+                mission.setMissionStatus3(true);
+            }
+
+            // 60분 달리기 미션 완료 조건
+            if (dailyRunningTime >= 60 && !mission.isMissionStatus4()) {
+                mission.setMissionStatus4(true);
+            }
+
+            dailyMissionRepository.save(mission);  // 미션 상태가 업데이트되면 저장
         }
     }
 
+    // 주간 미션 평가
     public void evaluateWeeklyMissions(Long userId) {
         Running running = runningRepository.findByUserId(userId);
 
@@ -68,69 +67,30 @@ public class MissionService {
         }
 
         double weeklyDistance = running.getDistance(); // 주간 거리
-        int weeklyRunningTime = running.getRunningTime(); // 주간 시간
 
-        List<WeeklyMission> missions = weeklyMissionRepository.findByUserId(userId);
+        WeeklyMission mission = weeklyMissionRepository.findByUserId(userId);
 
-        // 하루에 한 번만 카운트할 변수를 추가합니다.
-        boolean hasRunToday = false;
 
-        // 오늘 날짜를 구합니다.
-        LocalDate today = LocalDate.now();
-
-        for (WeeklyMission mission : missions) {
-            // 미션이 클리어되지 않았고, 오늘 뛴 기록이 있을 경우
-            if (!mission.isMissionStatus() && !hasRunToday) {
-                // 오늘의 기록이 있는지 확인
-                LocalDate runningDate = running.getCreatedDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                if (runningDate.equals(today)) {
-                    hasRunToday = true; // 오늘 뛴 기록이 있으므로 true로 설정
-                    mission.setRunningCount(mission.getRunningCount() + 1); // runningCount 증가
-                }
-            }
-
-            switch (mission.getId().intValue()) {
-                case 1:
-                    if (weeklyDistance >= 15 && !mission.isMissionStatus()) {
-                        completeWeeklyMission(mission);
-                    }
-                    break;
-                case 2:
-                    if (weeklyDistance >= 30 && !mission.isMissionStatus()) {
-                        completeWeeklyMission(mission);
-                    }
-                    break;
-                case 3:
-                    if (mission.getRunningCount() >= 2 && !mission.isMissionStatus()) {
-                        completeWeeklyMission(mission);
-                    }
-                    break;
-                case 4:
-                    if (mission.getRunningCount() >= 4 && !mission.isMissionStatus()) {
-                        completeWeeklyMission(mission);
-                    }
-                    break;
-                default:
-                    break;
-            }
+        // 주간 거리 15km 미션 완료 조건
+        if (weeklyDistance >= 15 && !mission.isMissionStatus1()) {
+            mission.setMissionStatus1(true);
         }
 
-        // 업데이트된 runningCount를 저장합니다.
-        for (WeeklyMission mission : missions) {
-            weeklyMissionRepository.save(mission);
+        // 주간 거리 30km 미션 완료 조건
+        if (weeklyDistance >= 30 && !mission.isMissionStatus2()) {
+            mission.setMissionStatus2(true);
         }
-    }
 
+        // 주간 러닝 횟수 2회 미션 완료 조건
+        if (mission.getRunningCount() >= 2 && !mission.isMissionStatus3()) {
+            mission.setMissionStatus3(true);
+        }
 
-    // 일일 미션 완료
-    private void completeDailyMission(DailyMission mission) {
-        mission.setMissionStatus(true);
-        dailyMissionRepository.save(mission);
-    }
+        // 주간 러닝 횟수 4회 미션 완료 조건
+        if (mission.getRunningCount() >= 4 && !mission.isMissionStatus4()) {
+            mission.setMissionStatus4(true);
+        }
 
-    // 주간 미션 완료
-    private void completeWeeklyMission(WeeklyMission mission) {
-        mission.setMissionStatus(true);
         weeklyMissionRepository.save(mission);
     }
 
@@ -138,8 +98,14 @@ public class MissionService {
     @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
     public void resetDailyMissions() {
         List<DailyMission> missions = dailyMissionRepository.findAll();
+
         for (DailyMission mission : missions) {
-            mission.setMissionStatus(false); // 미션 상태를 false로 리셋
+            mission.setMissionStatus1(false); // 미션 상태를 false로 리셋
+            mission.setMissionStatus2(false);
+            mission.setMissionStatus3(false);
+            mission.setMissionStatus4(false);
+            mission.setDailyRunningTime(0);
+            mission.setDailyRunningDistance(0.0);
             dailyMissionRepository.save(mission); // 상태 저장
         }
     }
