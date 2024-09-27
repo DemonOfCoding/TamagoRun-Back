@@ -73,6 +73,7 @@ public class MissionService {
     public void evaluateWeeklyMissions(Long userId) {
         Running running = runningRepository.findByUserId(userId);
         List<GameCharacter> gameCharacters = gameCharacterRepository.findAllByUserId(userId);
+        WeeklyMission mission = weeklyMissionRepository.findByUserId(userId);
 
         if (running == null) {
             return; // 러닝 기록이 없으면 종료
@@ -86,8 +87,6 @@ public class MissionService {
         }
 
         double weeklyDistance = running.getDistance(); // 주간 거리
-
-        WeeklyMission mission = weeklyMissionRepository.findByUserId(userId);
 
         int gainExp = 0;
 

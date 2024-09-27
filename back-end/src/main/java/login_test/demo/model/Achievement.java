@@ -26,9 +26,6 @@ public class Achievement {
     private boolean achievementStatus7;
     private boolean achievementStatus8;
 
-    // 업적 보상
-    private int achievementReward;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

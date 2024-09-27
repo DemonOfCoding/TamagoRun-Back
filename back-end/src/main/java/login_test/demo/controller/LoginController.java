@@ -50,7 +50,7 @@ public class LoginController {
         session.setAttribute("authCode", authCode);
         session.setAttribute("email", emailRequestDto.getEmail()); // 이메일 정보만 세션에 저장
 
-        return ResponseEntity.ok("이메일로 인증 코드를 발송했습니다.");
+        return ResponseEntity.ok("이메일로 인증 코드를 발송했습니다." + authCode);
     }
 
     // 비밀번호 찾기할 때
