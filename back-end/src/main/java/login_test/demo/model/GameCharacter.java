@@ -25,8 +25,7 @@ public class GameCharacter {
     // 캐릭터 분류
     private int kindOfCharacter;
 
-    private int evolutionCondition;
-
+    // 캐릭터 단계
     private int characterLevel;
 
     @ManyToOne

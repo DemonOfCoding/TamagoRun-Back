@@ -31,14 +31,8 @@ public class User {
     // 총 뛴 거리
     private double totalRunningDistance;
 
-    // 연속으로 뛴 일수
-    private int continuousDate;
-
     // 뛰었는지 체크
     private int totalRunningCount;
-
-    // 완료 미션
-    private int clearMission;
 
     // 총 칼로리
     private int totalCalorie;
