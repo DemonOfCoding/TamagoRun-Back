@@ -40,6 +40,42 @@ public class RunningService {
         List<DailyMission> dailyMissions = dailyMissionRepository.findByUserId(runningDto.getUser_id());
         DailyMission dailyMission = dailyMissions.isEmpty() ? null : dailyMissions.get(0); // Assume one DailyMission per user
 
+// 기존 거리 및 평균 페이스 가져오기, 전체 평균 페이스
+        double previousDistance = user.getTotalRunningDistance();
+        double previousAveragePace = user.getOverallAveragePace();
+        // 주 평균 페이스
+        double previousDistance2 = (running != null) ? running.getDistance() : 0.0;
+        double previousAveragePace2 = (running != null) ? running.getAveragePace() : 0;
+
+        double newDistance = runningDto.getDailyDistance();
+        int newPace = runningDto.getDailyAveragePace();
+
+        // 전체 평균 페이스 계산 (처음 받은 데이터일 경우 처리)
+        double totalDistance;
+        double weightedAveragePace;
+        if (previousDistance == 0) {
+            // 처음 데이터일 경우는 그대로 저장
+            totalDistance = newDistance;
+            weightedAveragePace = newPace;
+        } else {
+            // 기존 값이 있을 경우 가중 평균 계산
+            totalDistance = previousDistance + newDistance;
+            weightedAveragePace = (previousAveragePace * previousDistance + newPace * newDistance) / totalDistance;
+        }
+
+        // 주 평균 페이스 계산 (처음 받은 데이터일 경우 처리)
+        double weeklyDistance;
+        double weeklyWeightedAveragePace;
+        if (previousDistance2 == 0) {
+            // 처음 데이터일 경우는 그대로 저장
+            weeklyDistance = newDistance;
+            weeklyWeightedAveragePace = newPace;
+        } else {
+            // 기존 값이 있을 경우 가중 평균 계산
+            weeklyDistance = previousDistance2 + newDistance;
+            weeklyWeightedAveragePace = (previousAveragePace2 * previousDistance2 + newPace * newDistance) / weeklyDistance;
+        }
+
         if (running == null) {
             // 처음 데이터를 입력할 때
             running = Running.builder()
@@ -47,7 +83,7 @@ public class RunningService {
                     .runningTime(runningDto.getDailyRunningTime()) // 주간 누적 시간
                     .distance(runningDto.getDailyDistance())       // 주간 누적 거리
                     .calorie(runningDto.getDailyCalorie())
-                    .averagePace(runningDto.getDailyAveragePace())
+                    .averagePace(newPace)
                     .coordinate(runningDto.getCoordinates())
                     .createdDate(currentTimestamp)
                     .build();
@@ -56,6 +92,8 @@ public class RunningService {
             running.setRunningTime(running.getRunningTime() + runningDto.getDailyRunningTime());
             running.setDistance(running.getDistance() + runningDto.getDailyDistance());
             running.setCalorie(running.getCalorie() + runningDto.getDailyCalorie());
+            // 새로 계산된 가중 평균 페이스를 저장
+            running.setAveragePace((int) weeklyWeightedAveragePace);
         }
 
         // DailyMission 데이터 축적
@@ -73,17 +111,26 @@ public class RunningService {
         } else {
             if(dailyMission.getDailyRunningTime() == 0 && dailyMission.getDailyRunningDistance() == 0.0)
             {
-                int updatedCount = weeklyMission.getRunningCount() + 1;
-                weeklyMission.setRunningCount(updatedCount);
+                // 러닝 카운트
+                int updatedCount1 = user.getTotalRunningCount() + 1;
+                int updatedCount2 = weeklyMission.getRunningCount() + 1;
+                user.setTotalRunningCount(updatedCount1);
+                weeklyMission.setRunningCount(updatedCount2);
 
                 // 변경된 값을 저장
                 weeklyMissionRepository.save(weeklyMission);
+                userRepository.save(user);
             } // 일일 데이터가 없으면 처음 뛰는 것이므로 러닝 카운터를 1 상승 시킴
 
             // 기존 DailyMission 업데이트
             dailyMission.setDailyRunningTime(dailyMission.getDailyRunningTime() + runningDto.getDailyRunningTime());
             dailyMission.setDailyRunningDistance(dailyMission.getDailyRunningDistance() + runningDto.getDailyDistance());
         }
+
+        user.setTotalCalorie(user.getTotalCalorie() + runningDto.getDailyCalorie());
+        user.setTotalRunningDistance(user.getTotalRunningDistance() + runningDto.getDailyDistance());
+        user.setTotalRunningTime(user.getTotalRunningTime() + runningDto.getDailyRunningTime());
+        user.setOverallAveragePace((int) weightedAveragePace);
 
         runningRepository.save(running);
         dailyMissionRepository.save(dailyMission);
