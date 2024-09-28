@@ -17,7 +17,7 @@ public class MissionController {
     public ResponseEntity<String> evaluateDailyMissions(@RequestParam("userId") Long userId) {
 
         if (userId == null || userId <= 0)
-            return ResponseEntity.badRequest().body("유효하지 않는 유저입니다.");
+            return ResponseEntity.badRequest().body("유효하지 않은 유저입니다.");
         missionService.evaluateDailyMissions(userId);
 
         return ResponseEntity.ok("일일 미션 평가 완료");
@@ -27,7 +27,7 @@ public class MissionController {
     @PostMapping("/weekly")
     public ResponseEntity<String> accumulateWeeklyData(@RequestParam("userId") Long userId) {
         if (userId == null || userId <= 0)
-            return ResponseEntity.badRequest().body("유효하지 않는 유저입니다.");
+            return ResponseEntity.badRequest().body("유효하지 않은 유저입니다.");
 
         missionService.evaluateWeeklyMissions(userId);
 

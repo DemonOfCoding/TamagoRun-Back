@@ -18,20 +18,21 @@ public class FriendController {
     // 친구 추가
     @PostMapping("/add")
     public ResponseEntity<String> addFriend(@RequestParam("loginId") String loginId, @RequestParam("friendId") String friendId) {
+
         friendService.addFriend(loginId, friendId);
         return ResponseEntity.ok("loginId: " + loginId + " friendId: " + friendId + "친구 추가 성공");
     }
 
     // 친구 목록 조회
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Friendship>> getFriends(@PathVariable Long userId) {
+    public ResponseEntity<List<Friendship>> getFriends(@PathVariable("userId") Long userId) {
         List<Friendship> friends = friendService.getFriends(userId);
         return ResponseEntity.ok(friends);
     }
 
     // 친구 삭제
     @DeleteMapping("/delete")
-    public ResponseEntity<String> deleteFriend(@RequestParam String loginId, @RequestParam String friendId) {
+    public ResponseEntity<String> deleteFriend(@RequestParam("loginId") String loginId, @RequestParam("friendId") String friendId) {
         friendService.deleteFriend(loginId, friendId);
         return ResponseEntity.ok("Friend deleted successfully");
     }

@@ -6,6 +6,7 @@ import login_test.demo.repository.FriendsRepository;
 import login_test.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -46,6 +47,7 @@ public class FriendService {
     }
 
     // 친구 삭제 기능
+    @Transactional
     public void deleteFriend(String loginId, String friendId) {
         // 로그인한 사용자 조회
         User user = userRepository.findByLoginId(loginId);
