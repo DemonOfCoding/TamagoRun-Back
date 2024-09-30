@@ -24,9 +24,8 @@ public class GameCharacter {
 
     // 캐릭터 분류
     private int kindOfCharacter;
-
     // 캐릭터 단계
-    private int characterLevel;
+    private int evolutionLevel;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

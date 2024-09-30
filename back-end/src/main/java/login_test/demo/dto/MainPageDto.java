@@ -8,6 +8,7 @@ public class MainPageDto {
     private String loginId;
     private int experience;
     private int kindOfCharacter;
-    private int characterLevel;
+    private int species;
+    private int evolutionLevel;
     private int continuousDate;
 }

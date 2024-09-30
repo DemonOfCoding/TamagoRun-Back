@@ -131,7 +131,7 @@ public class LoginController {
                         GameCharacter defaultCharacter = new GameCharacter();
                         defaultCharacter.setExperience(0);
                         defaultCharacter.setKindOfCharacter(1); // 기본 캐릭터 종류
-                        defaultCharacter.setCharacterLevel(1); // 기본 레벨
+                        defaultCharacter.setEvolutionLevel(0); // 기본 레벨
                         return defaultCharacter;
                     });
 
@@ -148,8 +148,10 @@ public class LoginController {
             mainPageDto.setLoginId(user.getLoginId());
             mainPageDto.setExperience(gameCharacter.getExperience());
             mainPageDto.setKindOfCharacter(gameCharacter.getKindOfCharacter());
-            mainPageDto.setCharacterLevel(gameCharacter.getCharacterLevel());
+            mainPageDto.setEvolutionLevel(gameCharacter.getEvolutionLevel());
             mainPageDto.setContinuousDate(statistic.getWeeklyRunningTime());
+            mainPageDto.setSpecies(gameCharacter.getSpecies());
+
 
             return ResponseEntity.ok("로그인 성공, 세션 ID: " + session.getId() + " " + mainPageDto);
         } else {

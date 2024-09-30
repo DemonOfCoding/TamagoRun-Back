@@ -29,7 +29,7 @@ public class GameCharacterService {
 
             GameCharacter gameCharacter = GameCharacter.builder()
                     .user(user)
-                    .characterLevel(0)
+                    .evolutionLevel(0)
                     .experience(0)
                     .species(gameCharacterDto.getSpecies())
                     .kindOfCharacter(randNum)

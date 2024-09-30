@@ -123,17 +123,17 @@ public class MissionService {
         character.setExperience(currentExp + gainedExp);
 
         // 진화 조건 체크 및 레벨업
-        if (character.getCharacterLevel() == 0 && character.getExperience() >= 8000) {
-            character.setCharacterLevel(1);
+        if (character.getEvolutionLevel() == 0 && character.getExperience() >= 8000) {
+            character.setEvolutionLevel(1);
             character.setExperience(character.getExperience() - 8000); // 진화 후 남은 경험치
-        } else if (character.getCharacterLevel() == 1 && character.getExperience() >= 15000) {
-            character.setCharacterLevel(2);
+        } else if (character.getEvolutionLevel() == 1 && character.getExperience() >= 15000) {
+            character.setEvolutionLevel(2);
             character.setExperience(character.getExperience() - 15000); // 진화 후 남은 경험치
-        } else if (character.getCharacterLevel() == 2 && character.getExperience() >= 30000) {
-            character.setCharacterLevel(3);
+        } else if (character.getEvolutionLevel() == 2 && character.getExperience() >= 30000) {
+            character.setEvolutionLevel(3);
             character.setExperience(character.getExperience() - 30000); // 진화 후 남은 경험치
-        } else if (character.getCharacterLevel() == 3 && character.getExperience() >= 50000) {
-            character.setCharacterLevel(4);
+        } else if (character.getEvolutionLevel() == 3 && character.getExperience() >= 50000) {
+            character.setEvolutionLevel(4);
         }
 
         gameCharacterRepository.save(character); // 캐릭터 저장
@@ -142,7 +142,7 @@ public class MissionService {
     // 활성 캐릭터 찾기
     private GameCharacter findActiveCharacter(List<GameCharacter> gameCharacters) {
         for (GameCharacter character : gameCharacters) {
-            if (character.getCharacterLevel() < 4) {
+            if (character.getEvolutionLevel() < 4) {
                 return character; // 레벨이 4 미만인 캐릭터 반환
             }
         }
