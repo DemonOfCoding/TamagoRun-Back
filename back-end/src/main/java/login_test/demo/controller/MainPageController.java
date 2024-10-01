@@ -19,7 +19,7 @@ public class MainPageController {
     private final HttpSession httpSession;
 
     @GetMapping("/check")
-    public ResponseEntity<String> checkCharacter() {
+    public ResponseEntity<?> checkCharacter() {
         String loginId = (String) httpSession.getAttribute("userLogin");
 
         if (loginId == null) {
@@ -29,6 +29,6 @@ public class MainPageController {
 
         MainPageDto mainPageDto = mainPageService.checkCharacter(loginId);
 
-        return ResponseEntity.ok("캐릭터 정보를 불러옵니다.\n" + mainPageDto);
+        return ResponseEntity.ok(mainPageDto);
     }
 }
