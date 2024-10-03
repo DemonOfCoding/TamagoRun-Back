@@ -36,7 +36,7 @@ public class GameCharacterService {
                     .evolutionLevel(0)
                     .experience(0)
                     .species(gameCharacterDto.getSpecies())
-                    .kindOfCharacter(randNum)
+                    .kindOfCharacter(0)
                     .build();
 
             gameCharacterRepository.save(gameCharacter);

@@ -106,7 +106,7 @@ public class LoginController {
 
             GameCharacterDto gameCharacterDto = GameCharacterDto.builder()
                     .userId(savedUser.getId())
-                    .species(100)
+                    .species(1)
                     .build();
 
             gameCharacterService.generateCharacter(gameCharacterDto);
