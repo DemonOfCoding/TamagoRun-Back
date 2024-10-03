@@ -19,15 +19,15 @@ public class LoginService {
 
     //회원가입
     @Transactional
-    public boolean signUp(User user) {
-
-        System.out.println("User Details - Login ID: " + user.getLoginId() + ", Password: " + user.getPassword() + ", Email: " + user.getEmail());
+    public User signUp(User user) {
+        System.out.println("Before Save: " + user.getLoginId());
 
         if (!isLoginIdDuplicate(user.getLoginId())) {
-            userRepository.save(user); // 사용자 정보 저장
-            return true;
+            User savedUser = userRepository.save(user); // 저장된 객체 반환
+            System.out.println("After Save: User ID: " + savedUser.getLoginId()); // 저장 후 ID 확인
+            return savedUser;
         }
-        return false;
+        return null;
     }
 
     //로그인

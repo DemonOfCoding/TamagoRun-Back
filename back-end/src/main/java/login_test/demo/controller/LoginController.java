@@ -9,6 +9,7 @@ import login_test.demo.model.User;
 import login_test.demo.repository.GameCharacterRepository;
 import login_test.demo.repository.StatisticRepository;
 import login_test.demo.repository.UserRepository;
+import login_test.demo.service.GameCharacterService;
 import login_test.demo.service.LoginService;
 import login_test.demo.service.MailSendService;
 import login_test.demo.service.RedisUtil;
@@ -26,6 +27,7 @@ public class LoginController {
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
     private final StatisticRepository statisticRepository;
+    private final GameCharacterService gameCharacterService;
 
 
     //이메일 전송 (회원가입) || (비번 찾기)
@@ -50,7 +52,7 @@ public class LoginController {
         return ResponseEntity.ok("이메일로 인증 코드를 발송했습니다." + authCode);
     }
 
-    // 비밀번호 찾기할 때
+    // 비밀번호 찾기할 때 (한 사용자의 아이디와 이메일인지 확인)
     @PostMapping("/requestSetPassword")
     public ResponseEntity<String> requestSetPassword(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
         String loginId = loginRequestDto.getLoginId();
@@ -94,8 +96,22 @@ public class LoginController {
             String email = (String) session.getAttribute("email");
             user.setEmail(email); // 세션에 저장된 이메일 설정
 
-            // 회원가입 처리
-            loginService.signUp(user);
+            // 회원가입 처리 후 저장된 User 객체 반환
+            User savedUser = loginService.signUp(user);
+            System.out.println(savedUser + " = savedUser");
+
+            if (savedUser == null || savedUser.getId() == null) {
+                return ResponseEntity.status(500).body("회원가입 후 사용자 ID가 설정되지 않았습니다.");
+            }
+
+            GameCharacterDto gameCharacterDto = GameCharacterDto.builder()
+                    .userId(savedUser.getId())
+                    .species(1)
+                    .build();
+
+            gameCharacterService.generateCharacter(gameCharacterDto);
+            System.out.println(gameCharacterDto.getUserId());
+            System.out.println(gameCharacterDto.getSpecies());
 
             // 세션에서 인증 정보 삭제
             session.removeAttribute("authCode");
@@ -137,6 +153,7 @@ public class LoginController {
             return ResponseEntity.status(401).body("로그인 실패 : 유효하지 않은 아이디 또는 비밀번호");
         }
     }
+
     // 로그아웃
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
@@ -164,7 +181,7 @@ public class LoginController {
     }
 
 
-    // 1. 아이디 중복 확인
+    // 아이디 중복 확인
     @GetMapping("/checkLoginId/{loginId}")
     public ResponseEntity<String> checkLoginIdDuplicate(@PathVariable("loginId") String loginId) {
         if (loginService.isLoginIdDuplicate(loginId)) {
