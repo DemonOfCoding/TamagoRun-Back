@@ -19,7 +19,7 @@ public class MainPageService {
 
         User user = userRepository.findByLoginId(loginId);
         GameCharacter gameCharacter = gameCharacterRepository.findByUserId(user.getId());
-
+        
         MainPageDto mainPageDto = MainPageDto.builder()
                 .loginId(user.getLoginId())
                 .experience(gameCharacter.getExperience())
