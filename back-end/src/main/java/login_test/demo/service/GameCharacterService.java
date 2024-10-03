@@ -20,6 +20,10 @@ public class GameCharacterService {
     // 게임 캐릭터 생성
     public void generateCharacter(GameCharacterDto gameCharacterDto) {
 
+        if (gameCharacterDto.getUserId() == null) {
+            throw new IllegalArgumentException("Character ID must not be null");
+        }
+
         Random random = new Random();
         int randNum = random.nextInt(3) + 1;
 
