@@ -16,14 +16,15 @@ public class Achievement {
     @Column(updatable = false, unique = true, nullable = false)
     private Long id;
 
-    private String title;
-
-    private String content;
-
     // 업적 상태
-    private boolean achievementStatus;
-    // 업적 보상
-    private int achievementReward;
+    private boolean achievementStatus1;
+    private boolean achievementStatus2;
+    private boolean achievementStatus3;
+    private boolean achievementStatus4;
+    private boolean achievementStatus5;
+    private boolean achievementStatus6;
+    private boolean achievementStatus7;
+    private boolean achievementStatus8;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

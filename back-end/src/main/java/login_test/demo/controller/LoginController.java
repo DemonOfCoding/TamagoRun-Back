@@ -1,8 +1,6 @@
 package login_test.demo.controller;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import login_test.demo.dto.*;
 import login_test.demo.model.GameCharacter;
@@ -27,7 +25,6 @@ public class LoginController {
     private final MailSendService mailSendService;
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
-    private final GameCharacterRepository gameCharacterRepository;
     private final StatisticRepository statisticRepository;
 
 
@@ -50,7 +47,7 @@ public class LoginController {
         session.setAttribute("authCode", authCode);
         session.setAttribute("email", emailRequestDto.getEmail()); // 이메일 정보만 세션에 저장
 
-        return ResponseEntity.ok("이메일로 인증 코드를 발송했습니다.");
+        return ResponseEntity.ok("이메일로 인증 코드를 발송했습니다." + authCode);
     }
 
     // 비밀번호 찾기할 때
@@ -127,16 +124,6 @@ public class LoginController {
             // 추가적인 유저 정보 가져오기
             User user = userRepository.findByLoginId(loginRequest.getLoginId());
 
-            // GameCharacter 정보 조회 (없을 경우 기본값 설정)
-            GameCharacter gameCharacter = gameCharacterRepository.findByUserId(user.getId())
-                    .orElseGet(() -> {
-                        GameCharacter defaultCharacter = new GameCharacter();
-                        defaultCharacter.setExperience(0);
-                        defaultCharacter.setKindOfCharacter(1); // 기본 캐릭터 종류
-                        defaultCharacter.setCharacterLevel(1); // 기본 레벨
-                        return defaultCharacter;
-                    });
-
             // Statistic 정보 조회 (없을 경우 기본값 설정)
             Statistic statistic = statisticRepository.findById(user.getId())
                     .orElseGet(() -> {
@@ -145,15 +132,7 @@ public class LoginController {
                         return defaultStatistic;
                     });
 
-            // MainPageDto에 유저 정보 및 캐릭터 정보 주입
-            MainPageDto mainPageDto = new MainPageDto();
-            mainPageDto.setLoginId(user.getLoginId());
-            mainPageDto.setExperience(gameCharacter.getExperience());
-            mainPageDto.setKindOfCharacter(gameCharacter.getKindOfCharacter());
-            mainPageDto.setCharacterLevel(gameCharacter.getCharacterLevel());
-            mainPageDto.setContinuousDate(statistic.getWeeklyRunningTime());
-
-            return ResponseEntity.ok("로그인 성공, 세션 ID: " + session.getId() + " " + mainPageDto);
+            return ResponseEntity.ok("로그인 성공, 세션 ID: " + session.getId());
         } else {
             return ResponseEntity.status(401).body("로그인 실패 : 유효하지 않은 아이디 또는 비밀번호");
         }

@@ -1,13 +1,9 @@
 package login_test.demo.controller;
 
-import login_test.demo.dto.AchievementDto;
-import login_test.demo.dto.MissionDto;
 import login_test.demo.service.MissionService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,18 +12,25 @@ public class MissionController {
 
     private final MissionService missionService;
 
-    // 미션 추가 요청
-    @PostMapping("/addMission")
-    public void requestMission(@RequestBody MissionDto missionDto) {
-        missionService.addMission(missionDto);
+    // 일일 미션 평가
+    @PostMapping("/daily")
+    public ResponseEntity<String> evaluateDailyMissions(@RequestParam("userId") Long userId) {
+
+        if (userId == null || userId <= 0)
+            return ResponseEntity.badRequest().body("유효하지 않은 유저입니다.");
+        missionService.evaluateDailyMissions(userId);
+
+        return ResponseEntity.ok("일일 미션 평가 완료");
     }
 
+    // 주간 미션 데이터 누적 및 평가
+    @PostMapping("/weekly")
+    public ResponseEntity<String> accumulateWeeklyData(@RequestParam("userId") Long userId) {
+        if (userId == null || userId <= 0)
+            return ResponseEntity.badRequest().body("유효하지 않은 유저입니다.");
 
-    // 업적 추가 요청
-    @PostMapping("/addAchievement")
-    public void requestAchievement(@RequestBody AchievementDto achievementDto) {
-        missionService.addAchievement(achievementDto);
+        missionService.evaluateWeeklyMissions(userId);
+
+        return ResponseEntity.ok("주간 미션 평가 완료");
     }
-
-
 }

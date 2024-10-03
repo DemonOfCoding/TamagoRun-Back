@@ -31,14 +31,8 @@ public class User {
     // 총 뛴 거리
     private double totalRunningDistance;
 
-    // 연속으로 뛴 일수
-    private int continuousDate;
-
     // 뛰었는지 체크
-    private boolean runningRecord;
-
-    // 완료 미션
-    private int clearMission;
+    private int totalRunningCount;
 
     // 총 칼로리
     private int totalCalorie;
@@ -50,9 +44,13 @@ public class User {
     private List<GameCharacter> users;
 
     @OneToMany(mappedBy = "user")
-    private List<Mission> missions;
+    private List<DailyMission> dailyMissions;
+    @OneToMany(mappedBy = "user")
+    private List<WeeklyMission> weeklyMissions;
     @OneToMany(mappedBy = "user")
     private List<Achievement> achievements;
     @OneToMany(mappedBy = "user")
     private List<Statistic> statistics;
+    @OneToMany(mappedBy = "user")
+    private List<Running> runnings;
 }

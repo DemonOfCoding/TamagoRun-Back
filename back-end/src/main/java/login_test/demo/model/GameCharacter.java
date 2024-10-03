@@ -2,6 +2,7 @@ package login_test.demo.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class GameCharacter {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,18 +18,16 @@ public class GameCharacter {
     private Long id;
 
     private int experience;
-    
+
+    // 캐릭터 종족
+    private int species;
+
+    // 캐릭터 분류
     private int kindOfCharacter;
-
-    private int evolutionCondition;
-
-    private int characterLevel;
+    // 캐릭터 단계
+    private int evolutionLevel;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @ManyToOne
-    @JoinColumn(name = "mission_id", nullable = false)
-    private Mission mission;
 }
