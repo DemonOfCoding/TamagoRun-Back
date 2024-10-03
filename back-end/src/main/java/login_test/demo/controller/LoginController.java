@@ -112,7 +112,7 @@ public class LoginController {
             gameCharacterService.generateCharacter(gameCharacterDto);
             System.out.println(gameCharacterDto.getUserId());
             System.out.println(gameCharacterDto.getSpecies());
-
+            System.out.println("바보");
             // 세션에서 인증 정보 삭제
             session.removeAttribute("authCode");
             session.removeAttribute("email");
