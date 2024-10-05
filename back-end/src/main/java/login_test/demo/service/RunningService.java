@@ -1,14 +1,8 @@
 package login_test.demo.service;
 
 import login_test.demo.dto.RunningDto;
-import login_test.demo.model.DailyMission;
-import login_test.demo.model.Running;
-import login_test.demo.model.User;
-import login_test.demo.model.WeeklyMission;
-import login_test.demo.repository.DailyMissionRepository;
-import login_test.demo.repository.RunningRepository;
-import login_test.demo.repository.UserRepository;
-import login_test.demo.repository.WeeklyMissionRepository;
+import login_test.demo.model.*;
+import login_test.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -23,21 +17,26 @@ public class RunningService {
     private final UserRepository userRepository;
     private final DailyMissionRepository dailyMissionRepository;
     private final WeeklyMissionRepository weeklyMissionRepository;
+    private final AchievementRepository achievementRepository;
+    private final RedisUtil redisUtil;
 
     // 러닝 데이터 받기
     public void getRunningData(RunningDto runningDto) {
-        // user_id를 통해 유저 프록시 객체를 가져옴
-        User user = userRepository.getReferenceById(runningDto.getUser_id());
-        WeeklyMission weeklyMission = weeklyMissionRepository.findByUserId(runningDto.getUser_id());
+
+        String loginId = redisUtil.getData(runningDto.getSessionId());
+
+        User user = userRepository.findByLoginId(loginId);
+        WeeklyMission weeklyMission = weeklyMissionRepository.findByUserId(user.getId());
+        Achievement achievement = achievementRepository.findByUserId(user.getId());
 
         // 현재 시간을 생성일로 설정
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
         // Running 엔티티에 User 설정 및 누적 데이터 축적
-        Running running = runningRepository.findByUserId(runningDto.getUser_id());
+        Running running = runningRepository.findByUserId(user.getId());
 
         // DailyMission 데이터 축적
-        List<DailyMission> dailyMissions = dailyMissionRepository.findByUserId(runningDto.getUser_id());
+        List<DailyMission> dailyMissions = dailyMissionRepository.findByUserId(user.getId());
         DailyMission dailyMission = dailyMissions.isEmpty() ? null : dailyMissions.get(0); // Assume one DailyMission per user
 
 // 기존 거리 및 평균 페이스 가져오기, 전체 평균 페이스
@@ -96,6 +95,33 @@ public class RunningService {
             running.setAveragePace((int) weeklyWeightedAveragePace);
         }
 
+        // weeklyMission 생성
+        if (weeklyMission == null) {
+            weeklyMission = WeeklyMission.builder()
+                    .user(user)
+                    .runningCount(0)
+                    .missionStatus1(false)
+                    .missionStatus2(false)
+                    .missionStatus3(false)
+                    .missionStatus4(false)
+                    .build();
+        }
+
+        // achievement 생성
+        if (achievement == null) {
+            achievement = Achievement.builder()
+                    .user(user)
+                    .achievementStatus1(false)
+                    .achievementStatus2(false)
+                    .achievementStatus3(false)
+                    .achievementStatus4(false)
+                    .achievementStatus5(false)
+                    .achievementStatus6(false)
+                    .achievementStatus7(false)
+                    .achievementStatus8(false)
+                    .build();
+        }
+
         // DailyMission 데이터 축적
         if (dailyMission == null) {
             // DailyMission이 없는 경우 새로 생성
@@ -133,6 +159,8 @@ public class RunningService {
         user.setOverallAveragePace((int) weightedAveragePace);
 
         runningRepository.save(running);
+        achievementRepository.save(achievement);
+        weeklyMissionRepository.save(weeklyMission);
         dailyMissionRepository.save(dailyMission);
     }
 

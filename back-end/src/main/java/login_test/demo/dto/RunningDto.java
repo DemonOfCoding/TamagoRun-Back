@@ -8,7 +8,7 @@ import java.util.List;
 
 @Data
 public class RunningDto {
-    private Long user_id;
+    private String sessionId;
     private int dailyRunningTime;
     private int dailyAveragePace;
     private int dailyCalorie;
