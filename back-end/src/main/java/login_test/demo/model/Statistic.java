@@ -20,14 +20,9 @@ public class Statistic {
     // 주 통계
     private int weeklyRunningTime;
     private Timestamp weeklyPacePerKm;
-    private int weeklyRunningDistance;
+    private double weeklyRunningDistance;
     private int weeklyCalorie;
 
-    // 월 통계
-    private int monthlyRunningTime;
-    private Timestamp monthlyPacePerKm;
-    private int monthlyRunningDistance;
-    private int monthlyCalorie;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

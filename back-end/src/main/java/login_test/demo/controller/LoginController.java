@@ -160,15 +160,70 @@ public class LoginController {
         loginService.logout(session);
         return ResponseEntity.ok("로그아웃 성공");
     }
+//7BC5F64C00195E2BDFEEAEAC3CE416DD
+    // checkSession
+//    @GetMapping("/checkSession")
+//    public ResponseEntity<String> checkSession(HttpServletRequest request) {
+//        HttpSession session = request.getSession(false);
+//        System.out.println("session : "+session);
+//        String cookieHeader = request.getHeader("Cookie");
+//        System.out.println(cookieHeader);
+//
+//        if (session != null && session.getAttribute("userLogin") != null){
+//            String loginId = (String) session.getAttribute("userLogin");
+//
+//            User user = userRepository.findByLoginId(loginId);
+//            if (user != null) {
+//                return ResponseEntity.ok("현재 로그인된 사용자: " + user.getLoginId());
+//            } else {
+//                return ResponseEntity.status(404).body("사용자를 찾을 수 없습니다.");
+//            }
+//        } else {
+//            return ResponseEntity.status(401).body("로그인되지 않은 상태압니다.");
+//        }
+//    }
 
-    //checkSession
     @GetMapping("/checkSession")
     public ResponseEntity<String> checkSession(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
+        String cookieHeader = request.getHeader("Cookie");
 
-        if (session != null && session.getAttribute("userLogin") != null){
+        // 쿠키에서 JSESSIONID 찾기
+        String sessionId = null;
+        if (cookieHeader != null) {
+            for (String cookie : cookieHeader.split(";")) {
+                cookie = cookie.trim();
+                if (cookie.startsWith("JSESSIONID=")) {
+                    sessionId = cookie.substring("JSESSIONID=".length());
+                    break;
+                }
+            }
+        }
+
+        // 세션이 없을 때 Redis에서 세션 ID로 loginId 조회
+        if (session == null && sessionId != null) {
+            // Redis에서 sessionId를 통해 loginId를 가져옴
+            String loginId = redisUtil.getData(sessionId);
+
+            if (loginId != null) {
+                // Redis에서 유효한 loginId를 찾았을 경우 세션을 새로 생성하고 로그인 정보 설정
+                session = request.getSession(true);
+                session.setAttribute("userLogin", loginId);
+
+                User user = userRepository.findByLoginId(loginId);
+                if (user != null) {
+                    return ResponseEntity.ok("자동 로그인된 사용자: " + user.getLoginId());
+                } else {
+                    return ResponseEntity.status(404).body("사용자를 찾을 수 없습니다.");
+                }
+            } else {
+                return ResponseEntity.status(401).body("로그인되지 않은 상태입니다.");
+            }
+        }
+
+        // 세션이 유효할 경우
+        if (session != null && session.getAttribute("userLogin") != null) {
             String loginId = (String) session.getAttribute("userLogin");
-
             User user = userRepository.findByLoginId(loginId);
             if (user != null) {
                 return ResponseEntity.ok("현재 로그인된 사용자: " + user.getLoginId());
@@ -176,10 +231,9 @@ public class LoginController {
                 return ResponseEntity.status(404).body("사용자를 찾을 수 없습니다.");
             }
         } else {
-            return ResponseEntity.status(401).body("로그인되지 않은 상태압니다.");
+            return ResponseEntity.status(401).body("로그인되지 않은 상태입니다.");
         }
     }
-
 
     // 아이디 중복 확인
     @GetMapping("/checkLoginId/{loginId}")

@@ -37,9 +37,9 @@ public class RunningService {
 
         // DailyMission 데이터 축적
         List<DailyMission> dailyMissions = dailyMissionRepository.findByUserId(user.getId());
-        DailyMission dailyMission = dailyMissions.isEmpty() ? null : dailyMissions.get(0); // Assume one DailyMission per user
+        DailyMission dailyMission = dailyMissions.isEmpty() ? null : dailyMissions.get(0);
 
-// 기존 거리 및 평균 페이스 가져오기, 전체 평균 페이스
+        // 기존 거리 및 평균 페이스 가져오기, 전체 평균 페이스
         double previousDistance = user.getTotalRunningDistance();
         double previousAveragePace = user.getOverallAveragePace();
         // 주 평균 페이스
