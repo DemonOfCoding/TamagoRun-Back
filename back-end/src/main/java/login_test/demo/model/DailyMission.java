@@ -26,6 +26,10 @@ public class DailyMission {
     private boolean missionStatus4;
     private int dailyRunningTime;
     private double dailyRunningDistance;
+    private boolean flag1;
+    private boolean flag2;
+    private boolean flag3;
+    private boolean flag4;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

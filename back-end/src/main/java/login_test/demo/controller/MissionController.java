@@ -1,6 +1,8 @@
 package login_test.demo.controller;
 
+import login_test.demo.dto.DailyMissionDto;
 import login_test.demo.dto.SessionDto;
+import login_test.demo.dto.WeeklyMissionDto;
 import login_test.demo.model.User;
 import login_test.demo.repository.UserRepository;
 import login_test.demo.service.MissionService;
@@ -20,30 +22,57 @@ public class MissionController {
 
     // 일일 미션 평가
     @PostMapping("/daily")
-    public ResponseEntity<String> evaluateDailyMissions(@RequestBody SessionDto sessionDto) {
+    public ResponseEntity<DailyMissionDto> evaluateDailyMissions(@RequestBody SessionDto sessionDto) {
 
         String loginId = redisUtil.getData(sessionDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
 
         if (user.getId() == null || user.getId() <= 0)
-            return ResponseEntity.badRequest().body("유효하지 않은 유저입니다.");
-        missionService.evaluateDailyMissions(user.getId());
+            return ResponseEntity.badRequest().build();
+        DailyMissionDto dailyMissionDto = missionService.evaluateDailyMissions(user.getId());
 
-        return ResponseEntity.ok("일일 미션 평가 완료");
+        return ResponseEntity.ok(dailyMissionDto); // DTO 객체를 반환
+    }
+
+    // 일일 미션 보상 획득
+    @PostMapping("/dailyReward")
+    public ResponseEntity<DailyMissionDto> getDailyMissionReward(@RequestBody SessionDto sessionDto) {
+        String loginId = redisUtil.getData(sessionDto.getSessionId());
+        User user = userRepository.findByLoginId(loginId);
+
+        if (user.getId() == null || user.getId() <= 0)
+            return ResponseEntity.badRequest().build();
+        DailyMissionDto dailyMissionDto = missionService.dailyMissionReward(user.getId());
+
+        return ResponseEntity.ok(dailyMissionDto);
     }
 
     // 주간 미션 데이터 누적 및 평가
     @PostMapping("/weekly")
-    public ResponseEntity<String> accumulateWeeklyData(@RequestBody SessionDto sessionDto) {
+    public ResponseEntity<WeeklyMissionDto> accumulateWeeklyData(@RequestBody SessionDto sessionDto) {
 
         String loginId = redisUtil.getData(sessionDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
 
         if (user.getId() == null || user.getId() <= 0)
-            return ResponseEntity.badRequest().body("유효하지 않은 유저입니다.");
+            return ResponseEntity.badRequest().build();
 
-        missionService.evaluateWeeklyMissions(user.getId());
+        WeeklyMissionDto weeklyMissionDto = missionService.evaluateWeeklyMissions(user.getId());
 
-        return ResponseEntity.ok("주간 미션 평가 완료");
+        return ResponseEntity.ok(weeklyMissionDto);
+    }
+
+    // 주간 미션 보상 획득
+    @PostMapping("/weeklyReward")
+    public ResponseEntity<WeeklyMissionDto> getWeeklyMissionReward(@RequestBody SessionDto sessionDto) {
+        String loginId = redisUtil.getData(sessionDto.getSessionId());
+        User user = userRepository.findByLoginId(loginId);
+
+        if (user.getId() == null || user.getId() <= 0)
+            return ResponseEntity.badRequest().build();
+
+        WeeklyMissionDto weeklyMissionDto = missionService.weeklyMissionReward(user.getId());
+
+        return ResponseEntity.ok(weeklyMissionDto);
     }
 }

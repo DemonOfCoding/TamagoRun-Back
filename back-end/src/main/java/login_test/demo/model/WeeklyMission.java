@@ -23,6 +23,10 @@ public class WeeklyMission {
     private boolean missionStatus2;
     private boolean missionStatus3;
     private boolean missionStatus4;
+    private boolean flag1;
+    private boolean flag2;
+    private boolean flag3;
+    private boolean flag4;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
