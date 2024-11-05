@@ -15,7 +15,6 @@ import java.util.List;
 public class FriendService {
     private final UserRepository userRepository;
     private final FriendsRepository friendsRepository;
-    private final RedisUtil redisUtil; // RedisUtil 주입
 
     // 친구 추가 기능
     public void addFriend(String sessionId, String friendId) {
