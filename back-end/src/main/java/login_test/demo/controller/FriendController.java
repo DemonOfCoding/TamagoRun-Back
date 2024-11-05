@@ -1,5 +1,6 @@
 package login_test.demo.controller;
 
+import login_test.demo.dto.FriendDto;
 import login_test.demo.dto.SessionDto;
 import login_test.demo.model.Friendship;
 import login_test.demo.service.FriendService;
@@ -30,9 +31,9 @@ public class FriendController {
     }
 
     // 친구 목록 조회
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Friendship>> getFriends(@PathVariable("userId") Long userId) {
-        List<Friendship> friends = friendService.getFriends(userId);
+    @GetMapping("/{loginId}")
+    public ResponseEntity<List<FriendDto>> getFriends(@PathVariable("loginId") String loginId) {
+        List<FriendDto> friends = friendService.getFriends(loginId);
         return ResponseEntity.ok(friends);
     }
 
