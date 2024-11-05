@@ -1,5 +1,6 @@
 package login_test.demo.controller;
 
+import login_test.demo.dto.AchievementDto;
 import login_test.demo.dto.SessionDto;
 import login_test.demo.model.User;
 import login_test.demo.repository.UserRepository;
@@ -20,15 +21,29 @@ public class AchievementController {
 
     // 업적 미션 평가
     @PostMapping("/evaluation")
-    public ResponseEntity<String> evaluateAchievement(@RequestBody SessionDto sessionDto) {
+    public ResponseEntity<AchievementDto> evaluateAchievement(@RequestBody SessionDto sessionDto) {
 
         String loginId = redisUtil.getData(sessionDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
 
         if (user.getId() == null || user.getId() <= 0)
-            return ResponseEntity.badRequest().body("유효하지 않은 유저입니다.");
+            return ResponseEntity.badRequest().build();
 
-        achievementService.evaluationAchievement(user.getId());
-        return ResponseEntity.ok("업적 평가가 완료되었습니다.");
+        AchievementDto achievementDto = achievementService.evaluationAchievement(user.getId());
+        return ResponseEntity.ok(achievementDto);
+    }
+
+    // 업적 보상 획득
+    @PostMapping("/achievementReward")
+    public ResponseEntity<AchievementDto> getAchievementReward(@RequestBody SessionDto sessionDto) {
+        String loginId = redisUtil.getData(sessionDto.getSessionId());
+        User user = userRepository.findByLoginId(loginId);
+
+        if (user.getId() == null || user.getId() <= 0)
+            return ResponseEntity.badRequest().build();
+
+        AchievementDto achievementDto = achievementService.achievementReward(user.getId());
+
+        return ResponseEntity.ok(achievementDto);
     }
 }
