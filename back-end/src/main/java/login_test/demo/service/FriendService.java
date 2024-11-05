@@ -10,20 +10,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-
 @Service
-@RequiredArgsConstructor //  클래스의 final 필드나 @NonNull이 붙은 필드에 대해 생성자를 자동으로 생성
+@RequiredArgsConstructor
 public class FriendService {
     private final UserRepository userRepository;
     private final FriendsRepository friendsRepository;
+    private final RedisUtil redisUtil; // RedisUtil 주입
 
     // 친구 추가 기능
-    public void addFriend(String loginId, String friendId) {
-        User user = userRepository.findByLoginId(loginId);
-        User friend = userRepository.findByLoginId(friendId);
+    public void addFriend(String sessionId, String friendId) {
+        // Redis에서 sessionId로 loginId 조회
+        if (sessionId == null) {
+            throw new IllegalArgumentException("Invalid session ID");
+        }
 
-        if (user == null || friend == null) {
-            throw new IllegalArgumentException("User or friend not found");
+        // loginId로 User 객체 조회
+        User user = userRepository.findByLoginId(sessionId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found for the given session ID");
+        }
+
+        User friend = userRepository.findByLoginId(friendId);
+        if (friend == null) {
+            throw new IllegalArgumentException("Friend not found with login ID: " + friendId);
         }
 
         if (friendsRepository.existsByUserAndFriend(user, friend)) {
@@ -48,16 +57,24 @@ public class FriendService {
 
     // 친구 삭제 기능
     @Transactional
-    public void deleteFriend(String loginId, String friendId) {
-        // 로그인한 사용자 조회
-        User user = userRepository.findByLoginId(loginId);
-        User friend = userRepository.findByLoginId(friendId);
+    public void deleteFriend(String sessionId, String friendId) {
+        // Redis에서 sessionId로 loginId 조회
 
-        if (user == null || friend == null) {
-            throw new IllegalArgumentException("User or friend not found");
+        if (sessionId == null) {
+            throw new IllegalArgumentException("Invalid session ID");
         }
 
-        // 삭제할 친구 관계가 존재하는지 확인
+        // loginId로 User 객체 조회
+        User user = userRepository.findByLoginId(sessionId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found for the given session ID");
+        }
+
+        User friend = userRepository.findByLoginId(friendId);
+        if (friend == null) {
+            throw new IllegalArgumentException("Friend not found with login ID: " + friendId);
+        }
+
         if (!friendsRepository.existsByUserAndFriend(user, friend)) {
             throw new IllegalArgumentException("Friendship does not exist");
         }
@@ -65,6 +82,4 @@ public class FriendService {
         // 친구 관계 삭제
         friendsRepository.deleteByUserAndFriend(user, friend);
     }
-
-
 }
