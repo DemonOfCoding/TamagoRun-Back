@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface DailyMissionRepository extends JpaRepository<DailyMission, Long> {
-    List<DailyMission> findByUserId(Long userId);
+    DailyMission findByUserId(Long userId);
 }

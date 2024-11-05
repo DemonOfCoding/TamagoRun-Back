@@ -25,6 +25,16 @@ public class Achievement {
     private boolean achievementStatus6;
     private boolean achievementStatus7;
     private boolean achievementStatus8;
+    private boolean flag1;
+    private boolean flag2;
+    private boolean flag3;
+    private boolean flag4;
+    private boolean flag5;
+    private boolean flag6;
+    private boolean flag7;
+    private boolean flag8;
+
+
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -5,22 +5,13 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class AchievementDto {
-
+public class DailyMissionDto {
     private boolean missionStatus1;
     private boolean missionStatus2;
     private boolean missionStatus3;
     private boolean missionStatus4;
-    private boolean missionStatus5;
-    private boolean missionStatus6;
-    private boolean missionStatus7;
-    private boolean missionStatus8;
     private boolean flag1;
     private boolean flag2;
     private boolean flag3;
     private boolean flag4;
-    private boolean flag5;
-    private boolean flag6;
-    private boolean flag7;
-    private boolean flag8;
 }

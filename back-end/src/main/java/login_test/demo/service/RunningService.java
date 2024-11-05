@@ -36,8 +36,7 @@ public class RunningService {
         Running running = runningRepository.findByUserId(user.getId());
 
         // DailyMission 데이터 축적
-        List<DailyMission> dailyMissions = dailyMissionRepository.findByUserId(user.getId());
-        DailyMission dailyMission = dailyMissions.isEmpty() ? null : dailyMissions.get(0);
+        DailyMission dailyMission = dailyMissionRepository.findByUserId(user.getId());
 
         // 기존 거리 및 평균 페이스 가져오기, 전체 평균 페이스
         double previousDistance = user.getTotalRunningDistance();
@@ -135,8 +134,7 @@ public class RunningService {
                     .dailyRunningDistance(runningDto.getDailyDistance())
                     .build();
         } else {
-            if(dailyMission.getDailyRunningTime() == 0 && dailyMission.getDailyRunningDistance() == 0.0)
-            {
+            if (dailyMission.getDailyRunningTime() == 0 && dailyMission.getDailyRunningDistance() == 0.0) {
                 // 러닝 카운트
                 int updatedCount1 = user.getTotalRunningCount() + 1;
                 int updatedCount2 = weeklyMission.getRunningCount() + 1;
@@ -163,6 +161,7 @@ public class RunningService {
         weeklyMissionRepository.save(weeklyMission);
         dailyMissionRepository.save(dailyMission);
     }
+
 
     // 주간 데이터 초기화 (매주 월요일 자정에 실행)
     // cron (초(0~59), 분(0~59), 시간(0~23), 일(1~31), 월(1~12), 요일(0~7))
