@@ -1,5 +1,6 @@
 package login_test.demo.service;
 
+import login_test.demo.dto.EvolutionDto;
 import login_test.demo.dto.GameCharacterDto;
 import login_test.demo.model.GameCharacter;
 import login_test.demo.model.User;
@@ -60,11 +61,42 @@ public class GameCharacterService {
     public int selectCharacter(Long userId) {
         GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
         Random randomValue = new Random();
-        int characterType = randomValue.nextInt(4);
+        int characterType = randomValue.nextInt(3) + 1;
 
         gameCharacter.setKindOfCharacter(characterType);
         gameCharacterRepository.save(gameCharacter);
 
         return characterType;
+    }
+
+    // 캐릭터 진화
+    public EvolutionDto evolutionCharacter(Long userId) {
+        GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
+
+        // 진화 조건 체크 및 레벨업
+        if (!gameCharacter.isEvolutionFlag0() && gameCharacter.getEvolutionLevel() == 0 && gameCharacter.getExperience() >= 8000) {
+            gameCharacter.setEvolutionLevel(1);
+            gameCharacter.setExperience(gameCharacter.getExperience() - 8000); // 진화 후 남은 경험치
+            gameCharacter.setEvolutionFlag0(true);
+        }
+        if ((gameCharacter.isEvolutionFlag0() && !gameCharacter.isEvolutionFlag1()) && gameCharacter.getEvolutionLevel() == 1 && gameCharacter.getExperience() >= 15000) {
+            gameCharacter.setEvolutionLevel(2);
+            gameCharacter.setExperience(gameCharacter.getExperience() - 15000); // 진화 후 남은 경험치
+            gameCharacter.setEvolutionFlag1(true);
+        }
+        if ((gameCharacter.isEvolutionFlag1() && !gameCharacter.isEvolutionFlag2()) && gameCharacter.getEvolutionLevel() == 2 && gameCharacter.getExperience() >= 30000) {
+            gameCharacter.setEvolutionLevel(3);
+            gameCharacter.setExperience(gameCharacter.getExperience() - 30000); // 진화 후 남은 경험치
+            gameCharacter.setEvolutionFlag2(true);
+        }
+
+        // 레벨업 정보 저장
+        gameCharacterRepository.save(gameCharacter);
+
+        return EvolutionDto.builder()
+                .evolutionFlag0(gameCharacter.isEvolutionFlag0())
+                .evolutionFlag1(gameCharacter.isEvolutionFlag1())
+                .evolutionFlag2(gameCharacter.isEvolutionFlag2())
+                .build();
     }
 }

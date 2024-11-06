@@ -187,20 +187,6 @@ public class AchievementService {
         int currentExp = character.getExperience();
         character.setExperience(currentExp + gainedExp);
 
-        // 진화 조건 체크 및 레벨업
-        if (character.getEvolutionLevel() == 0 && character.getExperience() >= 8000) {
-            character.setEvolutionLevel(1);
-            character.setExperience(character.getExperience() - 8000); // 진화 후 남은 경험치
-        } else if (character.getEvolutionLevel() == 1 && character.getExperience() >= 15000) {
-            character.setEvolutionLevel(2);
-            character.setExperience(character.getExperience() - 15000); // 진화 후 남은 경험치
-        } else if (character.getEvolutionLevel() == 2 && character.getExperience() >= 30000) {
-            character.setEvolutionLevel(3);
-            character.setExperience(character.getExperience() - 30000); // 진화 후 남은 경험치
-        } else if (character.getEvolutionLevel() == 3 && character.getExperience() >= 50000) {
-            character.setEvolutionLevel(4);
-        }
-
         gameCharacterRepository.save(character); // 캐릭터 저장
     }
 }
