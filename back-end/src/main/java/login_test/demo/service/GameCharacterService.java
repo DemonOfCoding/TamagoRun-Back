@@ -47,4 +47,24 @@ public class GameCharacterService {
             throw new RuntimeException("알 수 없는 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    // 종족 선택
+    public void selectSpecies(Long userId, int species) {
+        GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
+
+        gameCharacter.setSpecies(species);
+        gameCharacterRepository.save(gameCharacter);
+    }
+
+    // 캐릭터 종류 선택
+    public int selectCharacter(Long userId) {
+        GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
+        Random randomValue = new Random();
+        int characterType = randomValue.nextInt(4);
+
+        gameCharacter.setKindOfCharacter(characterType);
+        gameCharacterRepository.save(gameCharacter);
+
+        return characterType;
+    }
 }

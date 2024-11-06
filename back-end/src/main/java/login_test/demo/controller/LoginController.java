@@ -106,7 +106,7 @@ public class LoginController {
 
             GameCharacterDto gameCharacterDto = GameCharacterDto.builder()
                     .userId(savedUser.getId())
-                    .species(1)
+                    .species(0)
                     .build();
 
             gameCharacterService.generateCharacter(gameCharacterDto);
@@ -160,28 +160,6 @@ public class LoginController {
         loginService.logout(session);
         return ResponseEntity.ok("로그아웃 성공");
     }
-//7BC5F64C00195E2BDFEEAEAC3CE416DD
-    // checkSession
-//    @GetMapping("/checkSession")
-//    public ResponseEntity<String> checkSession(HttpServletRequest request) {
-//        HttpSession session = request.getSession(false);
-//        System.out.println("session : "+session);
-//        String cookieHeader = request.getHeader("Cookie");
-//        System.out.println(cookieHeader);
-//
-//        if (session != null && session.getAttribute("userLogin") != null){
-//            String loginId = (String) session.getAttribute("userLogin");
-//
-//            User user = userRepository.findByLoginId(loginId);
-//            if (user != null) {
-//                return ResponseEntity.ok("현재 로그인된 사용자: " + user.getLoginId());
-//            } else {
-//                return ResponseEntity.status(404).body("사용자를 찾을 수 없습니다.");
-//            }
-//        } else {
-//            return ResponseEntity.status(401).body("로그인되지 않은 상태압니다.");
-//        }
-//    }
 
     @GetMapping("/checkSession")
     public ResponseEntity<String> checkSession(HttpServletRequest request) {
