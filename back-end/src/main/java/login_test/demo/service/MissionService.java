@@ -81,22 +81,22 @@ public class MissionService {
         int gainExp = 0;
 
         if (dailyMission.isMissionStatus1() && !dailyMission.isFlag1()) {
-            gainExp += 2000;
+            gainExp += 50;
             dailyMission.setFlag1(true);
         }
 
         if (dailyMission.isMissionStatus2() && !dailyMission.isFlag2()) {
-            gainExp += 4000;
+            gainExp += 50;
             dailyMission.setFlag2(true);
         }
 
         if (dailyMission.isMissionStatus3() && !dailyMission.isFlag3()) {
-            gainExp += 4000;
+            gainExp += 50;
             dailyMission.setFlag3(true);
         }
 
         if (dailyMission.isMissionStatus4() && !dailyMission.isFlag4()) {
-            gainExp += 5000;
+            gainExp += 50;
             dailyMission.setFlag4(true);
         }
 
@@ -174,22 +174,22 @@ public class MissionService {
         int gainExp = 0;
 
         if (weeklyMission.isMissionStatus1() && !weeklyMission.isFlag1()) {
-            gainExp += 5000;
+            gainExp += 200;
             weeklyMission.setFlag1(true);
         }
 
         if (weeklyMission.isMissionStatus2() && !weeklyMission.isFlag2()) {
-            gainExp += 7000;
+            gainExp += 200;
             weeklyMission.setFlag2(true);
         }
 
         if (weeklyMission.isMissionStatus3() && !weeklyMission.isFlag3()) {
-            gainExp += 5000;
+            gainExp += 200;
             weeklyMission.setFlag3(true);
         }
 
         if (weeklyMission.isMissionStatus4() && !weeklyMission.isFlag4()) {
-            gainExp += 8000;
+            gainExp += 200;
             weeklyMission.setFlag4(true);
         }
 

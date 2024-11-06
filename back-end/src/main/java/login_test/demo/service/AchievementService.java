@@ -111,42 +111,42 @@ public class AchievementService {
         int gainExp = 0;
 
         if (achievement.isAchievementStatus1() && !achievement.isFlag1()) {
-            gainExp += 1000;
+            gainExp += 300;
             achievement.setFlag1(true);
         }
 
         if (achievement.isAchievementStatus2() && !achievement.isFlag2()) {
-            gainExp += 25000;
+            gainExp += 1000;
             achievement.setFlag2(true);
         }
 
         if (achievement.isAchievementStatus3() && !achievement.isFlag3()) {
-            gainExp += 50000;
+            gainExp += 1500;
             achievement.setFlag3(true);
         }
 
         if (achievement.isAchievementStatus4() && !achievement.isFlag4()) {
-            gainExp += 10000;
+            gainExp += 2000;
             achievement.setFlag4(true);
         }
 
         if (achievement.isAchievementStatus5() && !achievement.isFlag5()) {
-            gainExp += 18000;
+            gainExp += 1500;
             achievement.setFlag5(true);
         }
 
         if (achievement.isAchievementStatus6() && !achievement.isFlag6()) {
-            gainExp += 5000;
+            gainExp += 3000;
             achievement.setFlag6(true);
         }
 
         if (achievement.isAchievementStatus7() && !achievement.isFlag7()) {
-            gainExp += 10000;
+            gainExp += 300;
             achievement.setFlag7(true);
         }
 
         if (achievement.isAchievementStatus8() && !achievement.isFlag8()) {
-            gainExp += 15000;
+            gainExp += 500;
             achievement.setFlag8(true);
         }
 

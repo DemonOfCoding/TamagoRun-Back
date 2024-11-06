@@ -71,7 +71,7 @@ public class GameCharacterController {
         EvolutionDto evolutionDto = gameCharacterService.evolutionCharacter(user.getId());
 
         // 캐릭터가 최대 레벨일 경우
-        if (gameCharacter.getEvolutionLevel() == 3)
+        if (gameCharacter.getEvolutionLevel() == 4)
             return ResponseEntity.ok("캐릭터가 최대 레벨입니다.\n" + evolutionDto);
 
         return ResponseEntity.ok("캐릭터가 진화하였습니다.\n" +evolutionDto);

@@ -28,6 +28,7 @@ public class GameCharacter {
     private boolean evolutionFlag0;
     private boolean evolutionFlag1;
     private boolean evolutionFlag2;
+    private boolean evolutionFlag3;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
