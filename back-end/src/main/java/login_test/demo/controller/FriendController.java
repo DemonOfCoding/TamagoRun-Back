@@ -31,8 +31,14 @@ public class FriendController {
     }
 
     // 친구 목록 조회
-    @GetMapping("/{loginId}")
-    public ResponseEntity<List<FriendDto>> getFriends(@PathVariable("loginId") String loginId) {
+    @GetMapping("/list")
+    public ResponseEntity<List<FriendDto>> getFriends(@RequestBody SessionDto sessionDto) {
+        String loginId = redisUtil.getData(sessionDto.getSessionId()); // Redis에서 sessionId로 loginId 조회
+
+        if (loginId == null) {
+            return ResponseEntity.status(401).body(null); // 세션이 유효하지 않을 경우
+        }
+
         List<FriendDto> friends = friendService.getFriends(loginId);
         return ResponseEntity.ok(friends);
     }
@@ -42,7 +48,13 @@ public class FriendController {
     public ResponseEntity<String> deleteFriend(@RequestBody SessionDto sessionDto, @RequestParam("friendId") String friendId) {
         String loginId = redisUtil.getData(sessionDto.getSessionId());
         friendService.deleteFriend(loginId, friendId);
-        return ResponseEntity.ok("Friend deleted successfully");
+        boolean isDeleted = friendService.deleteFriend(loginId, friendId); // 삭제 결과 확인
+
+        if (isDeleted) {
+            return ResponseEntity.ok("Friend deleted successfully");
+        } else {
+            return ResponseEntity.status(404).body("Failed to delete friend: Friendship does not exist");
+        }
     }
 
 }

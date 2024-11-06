@@ -52,10 +52,7 @@ public class FriendService {
     // 친구 목록 조회
     public List<FriendDto> getFriends(String loginId) {
         User user = userRepository.findByLoginId(loginId);
-        List<Friendship> friendships = friendsRepository.findByUser(user);
-
-        // 디버그용 로그 추가: 반환된 친구 관계의 수를 확인
-        System.out.println("Friendships found: " + friendships.size());
+        //List<Friendship> friendships = friendsRepository.findByUser(user);
 
         // `FriendDTO`로 변환하여 필요한 정보만 반환
         return friendsRepository.findByUser(user).stream()
@@ -75,9 +72,8 @@ public class FriendService {
 
     // 친구 삭제 기능
     @Transactional
-    public void deleteFriend(String sessionId, String friendId) {
+    public boolean deleteFriend(String sessionId, String friendId) {
         // Redis에서 sessionId로 loginId 조회
-
         if (sessionId == null) {
             throw new IllegalArgumentException("Invalid session ID");
         }
@@ -87,17 +83,23 @@ public class FriendService {
         if (user == null) {
             throw new IllegalArgumentException("User not found for the given session ID");
         }
+        System.out.println("User ID: " + user.getId());
 
+        // friendId로 친구 User 객체 조회
         User friend = userRepository.findByLoginId(friendId);
         if (friend == null) {
             throw new IllegalArgumentException("Friend not found with login ID: " + friendId);
         }
+        System.out.println("Friend ID: " + friend.getId());
 
+        // 친구 관계가 존재하는지 확인
         if (!friendsRepository.existsByUserAndFriend(user, friend)) {
-            throw new IllegalArgumentException("Friendship does not exist");
+            System.out.println("Friendship does not exist");
+            return false;
         }
 
         // 친구 관계 삭제
         friendsRepository.deleteByUserAndFriend(user, friend);
+        return true; // 삭제 성공 시 true 반환
     }
 }
