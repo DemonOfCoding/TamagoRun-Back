@@ -2,9 +2,7 @@ package login_test.demo.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import login_test.demo.dto.MainPageDto;
 import login_test.demo.model.User;
-import login_test.demo.repository.GameCharacterRepository;
 import login_test.demo.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
