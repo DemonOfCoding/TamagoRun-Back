@@ -29,6 +29,8 @@ public class AchievementService {
 
         // 총 러닝 횟수
         int runningCount = user.getTotalRunningCount();
+        // 총 칼로리
+        int calorie = user.getTotalCalorie();
         // 총 러닝 거리
         double runningDistance = user.getTotalRunningDistance();
         // 친구 수 가져오기
@@ -39,39 +41,61 @@ public class AchievementService {
             achievement.setAchievementStatus1(true);
         }
 
-        // 50번째 러닝 완료
-        if (runningCount >= 50 && !achievement.isAchievementStatus2()) {
+        // 10번째 러닝 완료
+        if (runningCount >= 10 && !achievement.isAchievementStatus2()) {
             achievement.setAchievementStatus2(true);
         }
 
-        // 100번째 러닝 완료
-        if (runningCount >= 100 && !achievement.isAchievementStatus3()) {
+        // 30번째 러닝 완료
+        if (runningCount >= 30 && !achievement.isAchievementStatus3()) {
             achievement.setAchievementStatus3(true);
         }
 
-        // 누적 42.195km 달성
-        if (runningDistance >= 42.195 && !achievement.isAchievementStatus4()) {
+        // 50번째 러닝 완료
+        if (runningCount >= 30 && !achievement.isAchievementStatus4()) {
             achievement.setAchievementStatus4(true);
         }
 
-        // 누적 100km 달성
-        if (runningDistance >= 100 && !achievement.isAchievementStatus5()) {
+        // 누적 42.195km 달성
+        if (runningDistance >= 42.195 && !achievement.isAchievementStatus5()) {
             achievement.setAchievementStatus5(true);
         }
 
-        // 친구 맺기 10명 달성
-        if (friendCount >= 10 && !achievement.isAchievementStatus6()) {
+        // 누적 100km 달성
+        if (runningDistance >= 100 && !achievement.isAchievementStatus6()) {
             achievement.setAchievementStatus6(true);
         }
 
-        // 친구 맺기 20명 달성
-        if (friendCount >= 20 && !achievement.isAchievementStatus7()) {
+        // 첫 친추 달성
+        if (friendCount >= 1 && !achievement.isAchievementStatus7()) {
             achievement.setAchievementStatus7(true);
         }
 
-        // 친구 맺기 30명 달성
-        if (friendCount >= 30 && !achievement.isAchievementStatus8()) {
+        // 친구 맺기 5명 달성
+        if (friendCount >= 5 && !achievement.isAchievementStatus8()) {
             achievement.setAchievementStatus8(true);
+        }
+
+        // 친구 맺기 10명 달성
+        if (friendCount >= 10 && !achievement.isAchievementStatus9()) {
+            achievement.setAchievementStatus9(true);
+        }
+
+        // 친구 맺기 15명 달성
+        if (friendCount >= 15 && !achievement.isAchievementStatus10()) {
+            achievement.setAchievementStatus10(true);
+        }
+
+        if (calorie >= 1000 && !achievement.isAchievementStatus11()) {
+            achievement.setAchievementStatus11(true);
+        }
+
+        if (calorie >= 2000 && !achievement.isAchievementStatus12()) {
+            achievement.setAchievementStatus12(true);
+        }
+
+        if (calorie >= 3000 && !achievement.isAchievementStatus13()) {
+            achievement.setAchievementStatus13(true);
         }
 
         achievementRepository.save(achievement);
@@ -85,6 +109,11 @@ public class AchievementService {
                 achievement.isAchievementStatus6(),
                 achievement.isAchievementStatus7(),
                 achievement.isAchievementStatus8(),
+                achievement.isAchievementStatus9(),
+                achievement.isAchievementStatus10(),
+                achievement.isAchievementStatus11(),
+                achievement.isAchievementStatus12(),
+                achievement.isAchievementStatus13(),
                 achievement.isFlag1(),
                 achievement.isFlag2(),
                 achievement.isFlag3(),
@@ -92,7 +121,12 @@ public class AchievementService {
                 achievement.isFlag5(),
                 achievement.isFlag6(),
                 achievement.isFlag7(),
-                achievement.isFlag8()
+                achievement.isFlag8(),
+                achievement.isFlag9(),
+                achievement.isFlag10(),
+                achievement.isFlag11(),
+                achievement.isFlag12(),
+                achievement.isFlag13()
         );
     }
 
@@ -150,6 +184,31 @@ public class AchievementService {
             achievement.setFlag8(true);
         }
 
+        if (achievement.isAchievementStatus9() && !achievement.isFlag9()) {
+            gainExp += 1000;
+            achievement.setFlag9(true);
+        }
+
+        if (achievement.isAchievementStatus10() && !achievement.isFlag10()) {
+            gainExp += 1500;
+            achievement.setFlag10(true);
+        }
+
+        if (achievement.isAchievementStatus11() && !achievement.isFlag11()) {
+            gainExp += 500;
+            achievement.setFlag11(true);
+        }
+
+        if (achievement.isAchievementStatus12() && !achievement.isFlag12()) {
+            gainExp += 1000;
+            achievement.setFlag12(true);
+        }
+
+        if (achievement.isAchievementStatus13() && !achievement.isFlag13()) {
+            gainExp += 1500;
+            achievement.setFlag13(true);
+        }
+
         addExperience(activeCharacter, gainExp);
 
         return new AchievementDto(
@@ -161,6 +220,11 @@ public class AchievementService {
                 achievement.isAchievementStatus6(),
                 achievement.isAchievementStatus7(),
                 achievement.isAchievementStatus8(),
+                achievement.isAchievementStatus9(),
+                achievement.isAchievementStatus10(),
+                achievement.isAchievementStatus11(),
+                achievement.isAchievementStatus12(),
+                achievement.isAchievementStatus13(),
                 achievement.isFlag1(),
                 achievement.isFlag2(),
                 achievement.isFlag3(),
@@ -168,7 +232,12 @@ public class AchievementService {
                 achievement.isFlag5(),
                 achievement.isFlag6(),
                 achievement.isFlag7(),
-                achievement.isFlag8()
+                achievement.isFlag8(),
+                achievement.isFlag9(),
+                achievement.isFlag10(),
+                achievement.isFlag11(),
+                achievement.isFlag12(),
+                achievement.isFlag13()
         );
     }
 

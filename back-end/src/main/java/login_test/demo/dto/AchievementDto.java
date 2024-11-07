@@ -15,6 +15,11 @@ public class AchievementDto {
     private boolean missionStatus6;
     private boolean missionStatus7;
     private boolean missionStatus8;
+    private boolean missionStatus9;
+    private boolean missionStatus10;
+    private boolean missionStatus11;
+    private boolean missionStatus12;
+    private boolean missionStatus13;
     private boolean flag1;
     private boolean flag2;
     private boolean flag3;
@@ -23,4 +28,9 @@ public class AchievementDto {
     private boolean flag6;
     private boolean flag7;
     private boolean flag8;
+    private boolean flag9;
+    private boolean flag10;
+    private boolean flag11;
+    private boolean flag12;
+    private boolean flag13;
 }
