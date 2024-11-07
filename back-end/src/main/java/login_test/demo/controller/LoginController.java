@@ -127,29 +127,14 @@ public class LoginController {
     //로그인
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequest, HttpServletRequest request) {
+        // 서비스 계층에서 로그인 처리 및 세션 관리
+        String sessionId = loginService.login(loginRequest.getLoginId(), loginRequest.getPassword(), request);
 
-        if (loginService.login(loginRequest.getLoginId(), loginRequest.getPassword())) {
-            // 세션 생성 및 저장
-            HttpSession session = request.getSession();
-            session.setAttribute("userLogin", loginRequest.getLoginId());
-
-            // 세션 유지 기간 설정(30일)
-            session.setMaxInactiveInterval(30 * 24 * 60 * 60);
-            redisUtil.setData(session.getId(), loginRequest.getLoginId());
-
-            // 추가적인 유저 정보 가져오기
-            User user = userRepository.findByLoginId(loginRequest.getLoginId());
-
-            // Statistic 정보 조회 (없을 경우 기본값 설정)
-            Statistic statistic = statisticRepository.findById(user.getId())
-                    .orElseGet(() -> {
-                        Statistic defaultStatistic = new Statistic();
-                        defaultStatistic.setWeeklyRunningTime(0); // 기본 주간 기록
-                        return defaultStatistic;
-                    });
-
-            return ResponseEntity.ok("로그인 성공, 세션 ID: " + session.getId());
+        if (sessionId != null) {
+            // 로그인 성공 시 세션 ID 반환
+            return ResponseEntity.ok("로그인 성공, 세션 ID: " + sessionId);
         } else {
+            // 로그인 실패 시 에러 메시지 반환
             return ResponseEntity.status(401).body("로그인 실패 : 유효하지 않은 아이디 또는 비밀번호");
         }
     }

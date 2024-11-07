@@ -1,5 +1,6 @@
 package login_test.demo.service;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import login_test.demo.dto.MainPageDto;
 import login_test.demo.model.User;
@@ -15,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoginService {
     private final UserRepository userRepository;
     private final MailSendService mailSendService;
-    private final GameCharacterRepository gameCharacterRepository;
+    private final RedisUtil redisUtil;
 
     //회원가입
     @Transactional
@@ -31,19 +32,35 @@ public class LoginService {
     }
 
     //로그인
-    public boolean login(String loginId, String password) {
+    public String login(String loginId, String password, HttpServletRequest request) {
         // 데이터베이스에서 사용자를 찾는다
         User user = userRepository.findByLoginId(loginId);
         if (user == null) {
             System.out.println("사용자를 찾을 수 없습니다: " + loginId);
-            return false;
+            return null;
         }
 
         if (user.getPassword().equals(password)) {
-            return true; // 아이디와 비밀번호가 일치하면 true 반환
+            //redis 에서 기존 세션 id 있는 확인
+            String existingSessionId = redisUtil.getData(loginId);
+
+            if (existingSessionId != null) {
+                //기존 세션이 존재하면 그대로 반환
+                return existingSessionId;
+            } else {
+                HttpSession session = request.getSession(true); // 강제로 세션 생성
+                session.setAttribute("userLogin", loginId);
+
+                session.setMaxInactiveInterval(30 * 24 * 60 * 60); // 한달동안 유지
+
+                // 만료 기간 설정
+                redisUtil.setDataExpire(session.getId(), loginId, 30 * 24 * 60 * 60);
+
+                return session.getId(); // 새 세션 id 반환
+            }
         } else {
             System.out.println("비밀번호가 일치하지 않습니다.");
-            return false; // 비밀번호가 일치하지 않으면 false 반환
+            return null; // 비밀번호가 일치하지 않는 경우 null 반환
         }
     }
 
