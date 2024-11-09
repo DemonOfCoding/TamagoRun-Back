@@ -49,21 +49,21 @@ public class GameCharacterService {
         }
     }
 
-    // 종족 선택
-    public void selectSpecies(Long userId, int species) {
+
+    // 종족과 캐릭터 종류를 동시에 선택
+    public int selectSpeciesAndCharacter(Long userId, int species) {
         GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
 
+        // species 값 설정
+        System.out.println("종족 변경 : " + species);
         gameCharacter.setSpecies(species);
-        gameCharacterRepository.save(gameCharacter);
-    }
 
-    // 캐릭터 종류 선택
-    public int selectCharacter(Long userId) {
-        GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
-        Random randomValue = new Random();
-        int characterType = randomValue.nextInt(3) + 1;
-
+        // 캐릭터 종류를 1, 2, 3 중 하나로 랜덤 설정
+        Random random = new Random();
+        int characterType = random.nextInt(3) + 1; // 1, 2, 3 중 하나 선택
         gameCharacter.setKindOfCharacter(characterType);
+
+        // 변경 사항 저장
         gameCharacterRepository.save(gameCharacter);
 
         return characterType;

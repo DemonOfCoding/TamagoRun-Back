@@ -26,35 +26,19 @@ public class GameCharacterController {
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
 
-    // 종족 선택
-    @PostMapping("/selectSpecies")
-    public ResponseEntity<String> selectSpecies(@RequestBody GameCharacterDto gameCharacterDto) {
+    // 종족 및 종류 선택
+    @PostMapping("/selectSpeciesAndCharacter")
+    public ResponseEntity<String> selectSpeciesAndCharacter(@RequestBody GameCharacterDto gameCharacterDto) {
         String loginId = redisUtil.getData(gameCharacterDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
 
         if (loginId == null || user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
         }
+        // 종족 및 종류 설정
+        int characterType = gameCharacterService.selectSpeciesAndCharacter(user.getId(), gameCharacterDto.getSpecies());
 
-        gameCharacterService.selectSpecies(user.getId(), gameCharacterDto.getSpecies());
-
-        return ResponseEntity.ok("종족 "+ gameCharacterDto.getSpecies() + "을 선택하셨습니다.");
-    }
-
-    // 종류 선택
-    @PostMapping("/selectCharacter")
-    public ResponseEntity<String> selectCharacter(@RequestBody GameCharacterDto gameCharacterDto) {
-        String loginId = redisUtil.getData(gameCharacterDto.getSessionId());
-        User user = userRepository.findByLoginId(loginId);
-        int characterType;
-
-        if (loginId == null || user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
-        }
-
-        characterType = gameCharacterService.selectCharacter(user.getId());
-
-        return ResponseEntity.ok("캐릭터 " + characterType + "을 선택되었습니다.");
+        return ResponseEntity.ok("종족 " + gameCharacterDto.getSpecies() + "과 랜덤 캐릭터 종류 " + characterType + "이 선택되었습니다.");
     }
 
     // 캐릭터 진화
