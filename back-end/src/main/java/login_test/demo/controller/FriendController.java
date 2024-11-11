@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -41,16 +42,16 @@ public class FriendController {
 
     // 친구 목록 조회
     @GetMapping("/list")
-    public ResponseEntity<?> getFriends(@RequestBody SessionDto sessionDto) {
-        String loginId = redisUtil.getData(sessionDto.getSessionId()); // Redis에서 sessionId로 loginId 조회
+    public ResponseEntity<?> getFriends(@RequestHeader("SessionId") String sessionId) {
+        String loginId = redisUtil.getData(sessionId); // Redis에서 sessionId로 loginId 조회
 
         if (loginId == null) {
-            return ResponseEntity.status(401).body(null); // 세션이 유효하지 않을 경우
+            return ResponseEntity.status(401).body("Invalid session ID"); // 세션이 유효하지 않을 경우
         }
 
         List<FriendDto> friends = friendService.getFriends(loginId);
         if (friends.isEmpty()) {
-            return ResponseEntity.ok("친구 목록이 비어있습니다."); // 빈 리스트 반환
+            return ResponseEntity.ok(Collections.emptyList()); // 빈 리스트 반환
         }
 
         return ResponseEntity.ok(friends);

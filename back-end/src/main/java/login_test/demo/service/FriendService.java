@@ -58,7 +58,6 @@ public class FriendService {
     // 친구 목록 조회
     public List<FriendDto> getFriends(String loginId) {
         User user = userRepository.findByLoginId(loginId);
-        //List<Friendship> friendships = friendsRepository.findByUser(user);
 
         // `FriendDTO`로 변환하여 필요한 정보만 반환
         return friendsRepository.findByUser(user).stream()
