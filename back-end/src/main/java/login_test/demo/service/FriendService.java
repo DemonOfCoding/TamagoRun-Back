@@ -81,32 +81,28 @@ public class FriendService {
     public boolean deleteFriend(String sessionId, String friendId) {
         // Redis에서 sessionId로 loginId 조회
         if (sessionId == null) {
-            throw new IllegalArgumentException("Invalid session ID");
+            throw new IllegalArgumentException("유효하지 않은 세션 ID입니다.");
         }
 
         // loginId로 User 객체 조회
         User user = userRepository.findByLoginId(sessionId);
         if (user == null) {
-            throw new IllegalArgumentException("User not found for the given session ID");
+            throw new IllegalArgumentException("주어진 세션 ID에 해당하는 사용자를 찾을 수 없습니다.");
         }
-        System.out.println("User ID: " + user.getId());
 
         // friendId로 친구 User 객체 조회
         User friend = userRepository.findByLoginId(friendId);
         if (friend == null) {
-            throw new IllegalArgumentException("Friend not found with login ID: " + friendId);
+            throw new IllegalArgumentException("주어진 친구 ID에 해당하는 사용자를 찾을 수 없습니다.");
         }
-        System.out.println("Friend ID: " + friend.getId());
 
         // 친구 관계가 존재하는지 확인
         if (!friendsRepository.existsByUserAndFriend(user, friend)) {
-            System.out.println("Friendship does not exist");
-            return false;
+            return false;  // 친구 관계가 존재하지 않음
         }
 
         // 친구 관계 삭제
         friendsRepository.deleteByUserAndFriend(user, friend);
         friendsRepository.deleteByUserAndFriend(friend, user);
-        return true; // 삭제 성공 시 true 반환
-    }
-}
+        return true;  // 삭제 성공
+    }}

@@ -32,9 +32,13 @@ public class FriendController {
             return ResponseEntity.status(400).body("자기 자신과는 친구를 맺을 수 없습니다.");
         }
 
-        friendService.addFriend(loginId, friendId);
-
-        return ResponseEntity.ok("loginId: " + loginId + " friendId: " + friendId + " 친구 추가 성공");
+        try {
+            friendService.addFriend(loginId, friendId);
+            return ResponseEntity.ok("loginId: " + loginId + " friendId: " + friendId + " 친구 추가 성공");
+        } catch (IllegalArgumentException e) {
+            // 서비스 계층에서 발생한 예외 메시지를 그대로 전달
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
     }
 
     // 친구 목록 조회
@@ -58,13 +62,18 @@ public class FriendController {
     @DeleteMapping("/delete")
     public ResponseEntity<String> deleteFriend(@RequestBody SessionDto sessionDto, @RequestParam("friendId") String friendId) {
         String loginId = redisUtil.getData(sessionDto.getSessionId());
-        boolean isDeleted = friendService.deleteFriend(loginId, friendId); // 삭제 결과 확인
 
-        if (isDeleted) {
-            return ResponseEntity.ok("Friend deleted successfully");
-        } else {
-            return ResponseEntity.status(404).body("친구 삭제 실패, 친구 관계가 존재하지 않습니다.");
+        try {
+            boolean isDeleted = friendService.deleteFriend(loginId, friendId); // 삭제 결과 확인
+
+            if (isDeleted) {
+                return ResponseEntity.ok("친구가 성공적으로 삭제되었습니다.");
+            } else {
+                return ResponseEntity.status(404).body("친구 관계가 존재하지 않아 삭제할 수 없습니다.");
+            }
+        } catch (IllegalArgumentException e) {
+            // 예외가 발생한 경우 해당 메시지와 함께 400 응답 반환
+            return ResponseEntity.status(400).body(e.getMessage());
         }
     }
-
 }
