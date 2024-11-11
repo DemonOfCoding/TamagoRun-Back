@@ -106,6 +106,7 @@ public class FriendService {
 
         // 친구 관계 삭제
         friendsRepository.deleteByUserAndFriend(user, friend);
+        friendsRepository.deleteByUserAndFriend(friend, user);
         return true; // 삭제 성공 시 true 반환
     }
 }
