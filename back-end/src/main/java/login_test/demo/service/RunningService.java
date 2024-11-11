@@ -169,6 +169,7 @@ public class RunningService {
     public void resetWeeklyRunningData() {
         List<Running> runningRecords = runningRepository.findAll();
         for (Running running : runningRecords) {
+            running.setCreatedDate(null);
             running.setRunningTime(0);
             running.setDistance(0.0);
             running.setCalorie(0);
@@ -179,10 +180,15 @@ public class RunningService {
         // WeeklyMission 초기화
         List<WeeklyMission> weeklyMissions = weeklyMissionRepository.findAll();
         for (WeeklyMission mission : weeklyMissions) {
+            mission.setRunningCount(0);
             mission.setMissionStatus1(false); // 필요 시 미션 상태도 초기화
             mission.setMissionStatus2(false);
             mission.setMissionStatus3(false);
             mission.setMissionStatus4(false);
+            mission.setFlag1(false);
+            mission.setFlag2(false);
+            mission.setFlag3(false);
+            mission.setFlag4(false);
             weeklyMissionRepository.save(mission);
         }
     }

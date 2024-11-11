@@ -235,6 +235,10 @@ public class MissionService {
             mission.setMissionStatus2(false);
             mission.setMissionStatus3(false);
             mission.setMissionStatus4(false);
+            mission.setFlag1(false);
+            mission.setFlag2(false);
+            mission.setFlag3(false);
+            mission.setFlag4(false);
             mission.setDailyRunningTime(0);
             mission.setDailyRunningDistance(0.0);
             dailyMissionRepository.save(mission); // 상태 저장
