@@ -2,14 +2,12 @@ package login_test.demo.controller;
 
 import login_test.demo.dto.FriendDto;
 import login_test.demo.dto.SessionDto;
-import login_test.demo.model.Friendship;
 import login_test.demo.service.FriendService;
 import login_test.demo.service.RedisUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
 import java.util.List;
 
 @RestController
