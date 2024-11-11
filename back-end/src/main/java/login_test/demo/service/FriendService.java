@@ -40,13 +40,19 @@ public class FriendService {
             throw new IllegalArgumentException("Already friends");
         }
 
-        // 새로운 친구 관계 생성
-        Friendship friendship = new Friendship();
-        friendship.setUser(user);
-        friendship.setFriend(friend);
+        // 첫 번째 친구 관계 생성 (user -> friend)
+        Friendship friendship1 = new Friendship();
+        friendship1.setUser(user);
+        friendship1.setFriend(friend);
+
+        // 두 번째 친구 관계 생성 (friend -> user)
+        Friendship friendship2 = new Friendship();
+        friendship2.setUser(friend);
+        friendship2.setFriend(user);
 
         // 저장
-        friendsRepository.save(friendship);
+        friendsRepository.save(friendship1);
+        friendsRepository.save(friendship2);
     }
 
     // 친구 목록 조회
