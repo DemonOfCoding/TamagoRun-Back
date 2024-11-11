@@ -165,7 +165,7 @@ public class RunningService {
 
     // 주간 데이터 초기화 (매주 월요일 자정에 실행)
     // cron (초(0~59), 분(0~59), 시간(0~23), 일(1~31), 월(1~12), 요일(0~7))
-    @Scheduled(cron = "0 0 0 * * MON")
+    @Scheduled(cron = "0 0 0 * * MON", zone = "Asia/Seoul")
     public void resetWeeklyRunningData() {
         List<Running> runningRecords = runningRepository.findAll();
         for (Running running : runningRecords) {

@@ -226,7 +226,7 @@ public class MissionService {
     }
 
     // 일일 미션 리셋 (매일 자정)
-    @Scheduled(cron = "0 0 0 * * ?") // 매일 자정에 실행
+    @Scheduled(cron = "0 0 0 * * ?", zone = "Asia/Seoul") // 매일 자정에 실행
     public void resetDailyMissions() {
         List<DailyMission> missions = dailyMissionRepository.findAll();
 
