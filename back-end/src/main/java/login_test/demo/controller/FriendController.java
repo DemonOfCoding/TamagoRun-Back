@@ -1,6 +1,7 @@
 package login_test.demo.controller;
 
 import login_test.demo.dto.FriendDto;
+import login_test.demo.dto.MypageInfoDto;
 import login_test.demo.dto.SessionDto;
 import login_test.demo.service.FriendService;
 import login_test.demo.service.RedisUtil;
@@ -72,6 +73,21 @@ public class FriendController {
             }
         } catch (IllegalArgumentException e) {
             // 예외가 발생한 경우 해당 메시지와 함께 400 응답 반환
+            return ResponseEntity.status(400).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/runningData")
+    public ResponseEntity<?> getRunningData(@RequestHeader("SessionId") String sessionId, @RequestParam("friendId") String friendId) {
+        String loginId = redisUtil.getData(sessionId);
+
+        if (loginId == null) {
+            return ResponseEntity.status(401).body("Invalid session ID");
+        }
+        try {
+            MypageInfoDto runningData = friendService.getFriendData(loginId,friendId);
+            return ResponseEntity.ok(runningData);
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(400).body(e.getMessage());
         }
     }
