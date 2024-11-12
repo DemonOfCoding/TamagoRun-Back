@@ -1,7 +1,6 @@
 package login_test.demo.controller;
 
 import login_test.demo.dto.RunningDto;
-import login_test.demo.model.Running;
 import login_test.demo.service.RunningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController
