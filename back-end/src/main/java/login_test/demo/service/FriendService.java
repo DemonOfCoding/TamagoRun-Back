@@ -1,5 +1,6 @@
 package login_test.demo.service;
 
+import login_test.demo.dto.MypageInfoDto;
 import login_test.demo.model.Friendship;
 import login_test.demo.model.GameCharacter;
 import login_test.demo.model.User;
@@ -104,4 +105,35 @@ public class FriendService {
         friendsRepository.deleteByUserAndFriend(user, friend);
         friendsRepository.deleteByUserAndFriend(friend, user);
         return true;  // 삭제 성공
-    }}
+    }
+
+    public MypageInfoDto getFriendData(String sessionId, String friendId) {
+        // sessionId 로 로그인 ID 조회
+        User user = userRepository.findByLoginId(sessionId);
+
+        if (user == null) {
+            throw new IllegalArgumentException("주어진 sessionId로 해당 사용자를 찾을 수 없습니다.");
+        }
+
+        User friend = userRepository.findByLoginId(friendId);
+        if (friend == null || !friendsRepository.existsByUserAndFriend(user, friend)) {
+            throw new IllegalArgumentException("친구 (login ID: " + friendId + ")와 친구 관계를 찾을 수 없습니다.");
+        }
+
+        // 친구의 러닝 데이터 반환
+        GameCharacter character = friend.getUsers().isEmpty() ? null : friend.getUsers().get(0);
+
+        if (character == null) {
+            throw new IllegalArgumentException("친구의 러닝 기록을 찾을 수 없습니다. friend login ID: " + friendId);
+        }
+
+        return MypageInfoDto.builder()
+                .loginId(friend.getLoginId())
+                .totalRunningTime(friend.getTotalRunningTime())
+                .totalRunningDistance(friend.getTotalRunningDistance())
+                .totalCalorie(friend.getTotalCalorie())
+                .overallAveragePace(friend.getOverallAveragePace())
+                .build();
+    }
+}
+
