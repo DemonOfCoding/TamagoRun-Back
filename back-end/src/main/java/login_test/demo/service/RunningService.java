@@ -25,7 +25,7 @@ public class RunningService {
     private final RedisUtil redisUtil;
 
     // 달력에서 사용할 일별 러닝 데이터 받기
-    public List<RunningDto> getDailyRunningData(String sessionId, LocalDate date) {
+    public List<Coordinate> getDailyCoordinates(String sessionId, LocalDate date) {
         String loginId = redisUtil.getData(sessionId);
         User user = userRepository.findByLoginId(loginId);
 
@@ -38,15 +38,9 @@ public class RunningService {
 
         List<Running> runningData = runningRepository.findAllByUserIdAndCreatedDateBetween(user.getId(), startOfDay, endOfDay);
 
-        // Running 엔티티를 RunningDto로 변환
-        return runningData.stream().map(running -> RunningDto.builder()
-                        .sessionId(sessionId)
-                        .dailyRunningTime(running.getRunningTime())
-                        .dailyAveragePace(running.getAveragePace())
-                        .dailyCalorie(running.getCalorie())
-                        .dailyDistance(running.getDistance())
-                        .coordinates(running.getCoordinate())
-                        .build())
+        // 각 Running 엔티티에서 coordinates만 추출하여 하나의 리스트로 반환
+        return runningData.stream()
+                .flatMap(running -> running.getCoordinate().stream())
                 .collect(Collectors.toList());
     }
 
