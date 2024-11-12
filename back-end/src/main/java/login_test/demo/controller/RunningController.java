@@ -1,6 +1,7 @@
 package login_test.demo.controller;
 
 import login_test.demo.dto.RunningDto;
+import login_test.demo.model.Coordinate;
 import login_test.demo.service.RunningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,17 +33,16 @@ public class RunningController {
 
     // 특정 날짜의 러닝 데이터를 조회
     @GetMapping("/record/{date}")
-    public ResponseEntity<?> getDailyRunningData(
-            @RequestHeader(name = "SessionId") String sessionId, @PathVariable("date") String date) {
+    public ResponseEntity<?> getDailyCoordinate(@RequestHeader(name = "SessionId") String sessionId, @PathVariable("date") String date) {
         try {
             LocalDate localDate = LocalDate.parse(date); // yyyy-MM-dd 형식의 문자열을 LocalDate로 변환
-            List<RunningDto> dailyData = runningService.getDailyRunningData(sessionId, localDate);
+            List<Coordinate> coordinate = runningService.getDailyCoordinates(sessionId, localDate);
 
-            if (dailyData.isEmpty()) {
+            if (coordinate.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 날짜의 러닝 기록이 없습니다.");
             }
 
-            return ResponseEntity.ok(dailyData);
+            return ResponseEntity.ok(coordinate);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("러닝 데이터 조회를 실패했습니다.");
         }
