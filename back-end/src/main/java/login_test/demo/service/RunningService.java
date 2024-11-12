@@ -6,12 +6,16 @@ import login_test.demo.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class RunningService {
     private final RunningRepository runningRepository;
     private final UserRepository userRepository;
@@ -19,6 +23,32 @@ public class RunningService {
     private final WeeklyMissionRepository weeklyMissionRepository;
     private final AchievementRepository achievementRepository;
     private final RedisUtil redisUtil;
+
+    // 달력에서 사용할 일별 러닝 데이터 받기
+    public List<RunningDto> getDailyRunningData(String sessionId, LocalDate date) {
+        String loginId = redisUtil.getData(sessionId);
+        User user = userRepository.findByLoginId(loginId);
+
+        if (user == null) {
+            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
+        }
+
+        Timestamp startOfDay = Timestamp.valueOf(date.atStartOfDay());
+        Timestamp endOfDay = Timestamp.valueOf(date.plusDays(1).atStartOfDay().minusNanos(1));
+
+        List<Running> runningData = runningRepository.findAllByUserIdAndCreatedDateBetween(user.getId(), startOfDay, endOfDay);
+
+        // Running 엔티티를 RunningDto로 변환
+        return runningData.stream().map(running -> RunningDto.builder()
+                        .sessionId(sessionId)
+                        .dailyRunningTime(running.getRunningTime())
+                        .dailyAveragePace(running.getAveragePace())
+                        .dailyCalorie(running.getCalorie())
+                        .dailyDistance(running.getDistance())
+                        .coordinates(running.getCoordinate())
+                        .build())
+                .collect(Collectors.toList());
+    }
 
     // 러닝 데이터 받기
     public void getRunningData(RunningDto runningDto) {
@@ -161,6 +191,7 @@ public class RunningService {
         weeklyMissionRepository.save(weeklyMission);
         dailyMissionRepository.save(dailyMission);
     }
+
 
 
     // 주간 데이터 초기화 (매주 월요일 자정에 실행)
