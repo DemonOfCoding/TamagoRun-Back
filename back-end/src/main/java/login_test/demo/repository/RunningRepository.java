@@ -11,4 +11,6 @@ import java.util.List;
 public interface RunningRepository extends JpaRepository<Running, Long> {
     Running findByUserId(Long userId);
     List<Running> findAllByCreatedDateBefore(Timestamp timestamp);
+
+    List<Running> findAllByUserIdAndCreatedDateBetween(Long userId, Timestamp start, Timestamp end);
 }
