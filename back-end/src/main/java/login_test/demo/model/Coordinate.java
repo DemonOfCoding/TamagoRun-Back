@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,4 +14,5 @@ import lombok.NoArgsConstructor;
 public class Coordinate {
     private double x;
     private double y;
+    private Timestamp createdDate;
 }

@@ -46,15 +46,14 @@ public class GameCharacterController {
     public ResponseEntity<String> selectCharacter(@RequestBody GameCharacterDto gameCharacterDto) {
         String loginId = redisUtil.getData(gameCharacterDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
-        int characterType;
 
         if (loginId == null || user == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
         }
 
-        characterType = gameCharacterService.selectCharacter(user.getId());
+        EvolutionDto evolutionDto = gameCharacterService.selectCharacter(user.getId());
 
-        return ResponseEntity.ok("캐릭터 " + characterType + "을 선택되었습니다.");
+        return ResponseEntity.ok("캐릭터 " + evolutionDto.getKindOfCharacter() + "을 선택되었습니다.\n" + evolutionDto);
     }
 
     // 캐릭터 진화

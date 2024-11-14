@@ -58,7 +58,7 @@ public class GameCharacterService {
     }
 
     // 캐릭터 종류 선택
-    public int selectCharacter(Long userId) {
+    public EvolutionDto selectCharacter(Long userId) {
         GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
         Random randomValue = new Random();
         int characterType = randomValue.nextInt(3) + 1;
@@ -66,7 +66,11 @@ public class GameCharacterService {
         gameCharacter.setKindOfCharacter(characterType);
         gameCharacterRepository.save(gameCharacter);
 
-        return characterType;
+        return EvolutionDto.builder()
+                .species(gameCharacter.getSpecies())
+                .kindOfCharacter(gameCharacter.getKindOfCharacter())
+                .evolutionLevel(gameCharacter.getEvolutionLevel())
+                .build();
     }
 
     // 캐릭터 진화
@@ -98,10 +102,9 @@ public class GameCharacterService {
         gameCharacterRepository.save(gameCharacter);
 
         return EvolutionDto.builder()
-                .evolutionFlag0(gameCharacter.isEvolutionFlag0())
-                .evolutionFlag1(gameCharacter.isEvolutionFlag1())
-                .evolutionFlag2(gameCharacter.isEvolutionFlag2())
-                .evolutionFlag3(gameCharacter.isEvolutionFlag3())
+                .species(gameCharacter.getSpecies())
+                .kindOfCharacter(gameCharacter.getKindOfCharacter())
+                .evolutionLevel(gameCharacter.getEvolutionLevel())
                 .build();
     }
 }

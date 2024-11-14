@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,9 +53,15 @@ public class RunningService {
         User user = userRepository.findByLoginId(loginId);
         WeeklyMission weeklyMission = weeklyMissionRepository.findByUserId(user.getId());
         Achievement achievement = achievementRepository.findByUserId(user.getId());
+        List<Coordinate> coordinates = new ArrayList<>();
 
         // 현재 시간을 생성일로 설정
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
+
+        // runningDto에서 받은 좌표 데이터를 처리하여 저장
+        for (Coordinate dtoCoordinate : runningDto.getCoordinates()) {
+            coordinates.add(new Coordinate(dtoCoordinate.getX(), dtoCoordinate.getY(), currentTimestamp));
+        }
 
         // Running 엔티티에 User 설정 및 누적 데이터 축적
         Running running = runningRepository.findByUserId(user.getId());
@@ -106,7 +113,7 @@ public class RunningService {
                     .distance(runningDto.getDailyDistance())       // 주간 누적 거리
                     .calorie(runningDto.getDailyCalorie())
                     .averagePace(newPace)
-                    .coordinate(runningDto.getCoordinates())
+                    .coordinate(coordinates)
                     .createdDate(currentTimestamp)
                     .build();
         } else {

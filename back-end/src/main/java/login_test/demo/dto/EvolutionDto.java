@@ -6,8 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class EvolutionDto {
-    private boolean evolutionFlag0;
-    private boolean evolutionFlag1;
-    private boolean evolutionFlag2;
-    private boolean evolutionFlag3;
+    private int species;
+    private int kindOfCharacter;
+    private int evolutionLevel;
 }
