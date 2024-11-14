@@ -28,51 +28,46 @@ public class GameCharacterController {
 
     // 종족 선택
     @PostMapping("/selectSpecies")
-    public ResponseEntity<String> selectSpecies(@RequestBody GameCharacterDto gameCharacterDto) {
+    public ResponseEntity<EvolutionDto> selectSpecies(@RequestBody GameCharacterDto gameCharacterDto) {
         String loginId = redisUtil.getData(gameCharacterDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
 
         if (loginId == null || user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 사용자 없음
         }
 
-        gameCharacterService.selectSpecies(user.getId(), gameCharacterDto.getSpecies());
+        EvolutionDto evolutionDto = gameCharacterService.selectSpecies(user.getId(), gameCharacterDto.getSpecies());
 
-        return ResponseEntity.ok("종족 "+ gameCharacterDto.getSpecies() + "을 선택하셨습니다.");
+        return ResponseEntity.ok(evolutionDto);
     }
 
     // 종류 선택
     @PostMapping("/selectCharacter")
-    public ResponseEntity<String> selectCharacter(@RequestBody GameCharacterDto gameCharacterDto) {
+    public ResponseEntity<EvolutionDto> selectCharacter(@RequestBody GameCharacterDto gameCharacterDto) {
         String loginId = redisUtil.getData(gameCharacterDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
 
         if (loginId == null || user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 사용자 없음
         }
 
         EvolutionDto evolutionDto = gameCharacterService.selectCharacter(user.getId());
 
-        return ResponseEntity.ok("캐릭터 " + evolutionDto.getKindOfCharacter() + "을 선택되었습니다.\n" + evolutionDto);
+        return ResponseEntity.ok(evolutionDto);
     }
 
     // 캐릭터 진화
     @PostMapping("/evolutionCharacter")
-    public ResponseEntity<String> evolutionCharacter(@RequestBody GameCharacterDto gameCharacterDto) {
+    public ResponseEntity<EvolutionDto> evolutionCharacter(@RequestBody GameCharacterDto gameCharacterDto) {
         String loginId = redisUtil.getData(gameCharacterDto.getSessionId());
         User user = userRepository.findByLoginId(loginId);
-        GameCharacter gameCharacter = gameCharacterRepository.findByUserId(user.getId());
 
         if (loginId == null || user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 사용자를 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // 사용자 없음
         }
 
         EvolutionDto evolutionDto = gameCharacterService.evolutionCharacter(user.getId());
 
-        // 캐릭터가 최대 레벨일 경우
-        if (gameCharacter.getEvolutionLevel() == 4)
-            return ResponseEntity.ok("캐릭터가 최대 레벨입니다.\n" + evolutionDto);
-
-        return ResponseEntity.ok("캐릭터가 진화하였습니다.\n" +evolutionDto);
+        return ResponseEntity.ok(evolutionDto);
     }
 }

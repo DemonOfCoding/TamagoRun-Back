@@ -50,11 +50,17 @@ public class GameCharacterService {
     }
 
     // 종족 선택
-    public void selectSpecies(Long userId, int species) {
+    public EvolutionDto selectSpecies(Long userId, int species) {
         GameCharacter gameCharacter = gameCharacterRepository.findByUserId(userId);
 
         gameCharacter.setSpecies(species);
         gameCharacterRepository.save(gameCharacter);
+
+        return EvolutionDto.builder()
+                .species(gameCharacter.getSpecies())
+                .kindOfCharacter(gameCharacter.getKindOfCharacter())
+                .evolutionLevel(gameCharacter.getEvolutionLevel())
+                .build();
     }
 
     // 캐릭터 종류 선택
