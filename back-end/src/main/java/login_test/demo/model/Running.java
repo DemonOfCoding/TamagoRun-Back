@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 @Entity
 @Data
@@ -28,11 +27,6 @@ public class Running {
     private int averagePace;
     private int calorie;
     private double distance;
-
-    // 지도 경로 받을 리스트
-    @ElementCollection
-    @CollectionTable(name = "coordinate", joinColumns = @JoinColumn(name = "running_id"))
-    private List<Coordinate> coordinate;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
