@@ -1,11 +1,11 @@
 package login_test.demo.dto;
 
-import login_test.demo.model.Coordinate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 @Data
@@ -18,5 +18,6 @@ public class RunningDto {
     private int dailyAveragePace;
     private int dailyCalorie;
     private double dailyDistance;
-    private List<Coordinate> coordinates;
+
+    private List<CoordinateDTO> coordinates;
 }

@@ -1,5 +1,6 @@
 package login_test.demo.service;
 
+import login_test.demo.dto.CoordinateDTO;
 import login_test.demo.dto.RunningDto;
 import login_test.demo.model.*;
 import login_test.demo.repository.*;
@@ -12,7 +13,6 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -24,44 +24,44 @@ public class RunningService {
     private final WeeklyMissionRepository weeklyMissionRepository;
     private final AchievementRepository achievementRepository;
     private final RedisUtil redisUtil;
+    private final CoordinateRepository coordinateRepository;
 
     // 달력에서 사용할 일별 러닝 데이터 받기
     public List<Coordinate> getDailyCoordinates(String sessionId, LocalDate date) {
+        // 세션에서 로그인 ID 가져오기
         String loginId = redisUtil.getData(sessionId);
+        // 사용자 조회
         User user = userRepository.findByLoginId(loginId);
 
-        if (user == null) {
-            throw new IllegalArgumentException("사용자를 찾을 수 없습니다.");
-        }
-
+        // 날짜 범위 계산
         Timestamp startOfDay = Timestamp.valueOf(date.atStartOfDay());
         Timestamp endOfDay = Timestamp.valueOf(date.plusDays(1).atStartOfDay().minusNanos(1));
 
-        List<Running> runningData = runningRepository.findAllByUserIdAndCreatedDateBetween(user.getId(), startOfDay, endOfDay);
-
-        // 각 Running 엔티티에서 coordinates만 추출하여 하나의 리스트로 반환
-        return runningData.stream()
-                .flatMap(running -> running.getCoordinate().stream())
-                .collect(Collectors.toList());
+        // 좌표 데이터 조회 및 반환
+        return coordinateRepository.findAllByUserIdAndCreatedDateBetween(user.getId(), startOfDay, endOfDay);
     }
 
     // 러닝 데이터 받기
     public void getRunningData(RunningDto runningDto) {
-
         String loginId = redisUtil.getData(runningDto.getSessionId());
-
         User user = userRepository.findByLoginId(loginId);
+
         WeeklyMission weeklyMission = weeklyMissionRepository.findByUserId(user.getId());
         Achievement achievement = achievementRepository.findByUserId(user.getId());
-        List<Coordinate> coordinates = new ArrayList<>();
 
         // 현재 시간을 생성일로 설정
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
 
-        // runningDto에서 받은 좌표 데이터를 처리하여 저장
-        for (Coordinate dtoCoordinate : runningDto.getCoordinates()) {
-            coordinates.add(new Coordinate(dtoCoordinate.getX(), dtoCoordinate.getY(), currentTimestamp));
+        // 좌표 데이터를 개별적으로 저장
+        for (CoordinateDTO dtoCoordinate : runningDto.getCoordinates()) {
+            Coordinate coordinate = new Coordinate();
+            coordinate.setUser(user);
+            coordinate.setX(dtoCoordinate.getX());
+            coordinate.setY(dtoCoordinate.getY());
+            coordinate.setCreatedDate(currentTimestamp);
+            coordinateRepository.save(coordinate); // 독립적으로 Coordinate 저장
         }
+
 
         // Running 엔티티에 User 설정 및 누적 데이터 축적
         Running running = runningRepository.findByUserId(user.getId());
@@ -113,7 +113,6 @@ public class RunningService {
                     .distance(runningDto.getDailyDistance())       // 주간 누적 거리
                     .calorie(runningDto.getDailyCalorie())
                     .averagePace(newPace)
-                    .coordinate(coordinates)
                     .createdDate(currentTimestamp)
                     .build();
         } else {
