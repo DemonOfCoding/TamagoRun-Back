@@ -40,9 +40,11 @@ public class User {
     // 전체 평균 페이스
     private int overallAveragePace;
 
+    // 좌표 리스트
+    @OneToMany(mappedBy = "user")
+    private List<Coordinate> coordinates;
     @OneToMany(mappedBy = "user")
     private List<GameCharacter> users;
-
     @OneToMany(mappedBy = "user")
     private List<DailyMission> dailyMissions;
     @OneToMany(mappedBy = "user")

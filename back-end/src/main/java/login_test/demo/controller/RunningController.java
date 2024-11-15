@@ -1,5 +1,6 @@
 package login_test.demo.controller;
 
+import login_test.demo.dto.CoordinateResponseDTO;
 import login_test.demo.dto.RunningDto;
 import login_test.demo.model.Coordinate;
 import login_test.demo.service.RunningService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -32,17 +34,23 @@ public class RunningController {
     }
 
     // 특정 날짜의 러닝 데이터를 조회
+
     @GetMapping("/record/{date}")
     public ResponseEntity<?> getDailyCoordinate(@RequestHeader(name = "SessionId") String sessionId, @PathVariable("date") String date) {
         try {
             LocalDate localDate = LocalDate.parse(date); // yyyy-MM-dd 형식의 문자열을 LocalDate로 변환
-            List<Coordinate> coordinate = runningService.getDailyCoordinates(sessionId, localDate);
+            List<Coordinate> coordinates = runningService.getDailyCoordinates(sessionId, localDate);
 
-            if (coordinate.isEmpty()) {
+            if (coordinates.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 날짜의 러닝 기록이 없습니다.");
             }
 
-            return ResponseEntity.ok(coordinate);
+            // 필요한 데이터만 추출하여 DTO로 변환
+            List<CoordinateResponseDTO> response = coordinates.stream()
+                    .map(coordinate -> new CoordinateResponseDTO(coordinate.getX(), coordinate.getY()))
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("러닝 데이터 조회를 실패했습니다.");
         }
