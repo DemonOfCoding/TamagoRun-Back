@@ -41,12 +41,12 @@ public class MissionService {
         }
 
         // 30분 달리기 미션 완료 조건
-        if (dailyRunningTime >= 30 && !dailyMission.isMissionStatus3()) {
+        if (dailyRunningTime >= 1800 && !dailyMission.isMissionStatus3()) {
             dailyMission.setMissionStatus3(true);
         }
 
         // 60분 달리기 미션 완료 조건
-        if (dailyRunningTime >= 60 && !dailyMission.isMissionStatus4()) {
+        if (dailyRunningTime >= 3600 && !dailyMission.isMissionStatus4()) {
             dailyMission.setMissionStatus4(true);
         }
 
