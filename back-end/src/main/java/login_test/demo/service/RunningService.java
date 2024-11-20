@@ -47,7 +47,6 @@ public class RunningService {
         User user = userRepository.findByLoginId(loginId);
 
         WeeklyMission weeklyMission = weeklyMissionRepository.findByUserId(user.getId());
-        Achievement achievement = achievementRepository.findByUserId(user.getId());
 
         // 현재 시간을 생성일로 설정
         Timestamp currentTimestamp = new Timestamp(System.currentTimeMillis());
@@ -124,62 +123,21 @@ public class RunningService {
             running.setAveragePace((int) weeklyWeightedAveragePace);
         }
 
-        // weeklyMission 생성
-        if (weeklyMission == null) {
-            weeklyMission = WeeklyMission.builder()
-                    .user(user)
-                    .runningCount(0)
-                    .missionStatus1(false)
-                    .missionStatus2(false)
-                    .missionStatus3(false)
-                    .missionStatus4(false)
-                    .build();
-        }
+        if (dailyMission.getDailyRunningTime() == 0 && dailyMission.getDailyRunningDistance() == 0.0) {
+            // 러닝 카운트
+            int updatedCount1 = user.getTotalRunningCount() + 1;
+            int updatedCount2 = weeklyMission.getRunningCount() + 1;
+            user.setTotalRunningCount(updatedCount1);
+            weeklyMission.setRunningCount(updatedCount2);
 
-        // achievement 생성
-        if (achievement == null) {
-            achievement = Achievement.builder()
-                    .user(user)
-                    .achievementStatus1(false)
-                    .achievementStatus2(false)
-                    .achievementStatus3(false)
-                    .achievementStatus4(false)
-                    .achievementStatus5(false)
-                    .achievementStatus6(false)
-                    .achievementStatus7(false)
-                    .achievementStatus8(false)
-                    .build();
-        }
+            // 변경된 값을 저장
+            weeklyMissionRepository.save(weeklyMission);
+            userRepository.save(user);
+        } // 일일 데이터가 없으면 처음 뛰는 것이므로 러닝 카운터를 1 상승 시킴
 
-        // DailyMission 데이터 축적
-        if (dailyMission == null) {
-            // DailyMission이 없는 경우 새로 생성
-            dailyMission = DailyMission.builder()
-                    .user(user)
-                    .missionStatus1(false) // 초기 상태는 미션 미완료
-                    .missionStatus2(false)
-                    .missionStatus3(false)
-                    .missionStatus4(false)
-                    .dailyRunningTime(runningDto.getDailyRunningTime())
-                    .dailyRunningDistance(runningDto.getDailyDistance())
-                    .build();
-        } else {
-            if (dailyMission.getDailyRunningTime() == 0 && dailyMission.getDailyRunningDistance() == 0.0) {
-                // 러닝 카운트
-                int updatedCount1 = user.getTotalRunningCount() + 1;
-                int updatedCount2 = weeklyMission.getRunningCount() + 1;
-                user.setTotalRunningCount(updatedCount1);
-                weeklyMission.setRunningCount(updatedCount2);
-
-                // 변경된 값을 저장
-                weeklyMissionRepository.save(weeklyMission);
-                userRepository.save(user);
-            } // 일일 데이터가 없으면 처음 뛰는 것이므로 러닝 카운터를 1 상승 시킴
-
-            // 기존 DailyMission 업데이트
-            dailyMission.setDailyRunningTime(dailyMission.getDailyRunningTime() + runningDto.getDailyRunningTime());
-            dailyMission.setDailyRunningDistance(dailyMission.getDailyRunningDistance() + runningDto.getDailyDistance());
-        }
+        // 기존 DailyMission 업데이트
+        dailyMission.setDailyRunningTime(dailyMission.getDailyRunningTime() + runningDto.getDailyRunningTime());
+        dailyMission.setDailyRunningDistance(dailyMission.getDailyRunningDistance() + runningDto.getDailyDistance());
 
         user.setTotalCalorie(user.getTotalCalorie() + runningDto.getDailyCalorie());
         user.setTotalRunningDistance(user.getTotalRunningDistance() + runningDto.getDailyDistance());
@@ -187,7 +145,6 @@ public class RunningService {
         user.setOverallAveragePace((int) weightedAveragePace);
 
         runningRepository.save(running);
-        achievementRepository.save(achievement);
         weeklyMissionRepository.save(weeklyMission);
         dailyMissionRepository.save(dailyMission);
     }

@@ -2,8 +2,14 @@ package login_test.demo.service;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import login_test.demo.model.Achievement;
+import login_test.demo.model.DailyMission;
 import login_test.demo.model.User;
+import login_test.demo.model.WeeklyMission;
+import login_test.demo.repository.AchievementRepository;
+import login_test.demo.repository.DailyMissionRepository;
 import login_test.demo.repository.UserRepository;
+import login_test.demo.repository.WeeklyMissionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class LoginService {
     private final UserRepository userRepository;
     private final MailSendService mailSendService;
+    private final DailyMissionRepository dailyMissionRepository;
+    private final WeeklyMissionRepository weeklyMissionRepository;
+    private final AchievementRepository achievementRepository;
     private final RedisUtil redisUtil;
 
     //회원가입
@@ -24,8 +33,78 @@ public class LoginService {
         if (!isLoginIdDuplicate(user.getLoginId())) {
             User savedUser = userRepository.save(user); // 저장된 객체 반환
             System.out.println("After Save: User ID: " + savedUser.getLoginId()); // 저장 후 ID 확인
+
+
+            DailyMission dailyMission = new DailyMission();
+            WeeklyMission weeklyMission = new WeeklyMission();
+            Achievement achievement = new Achievement();
+
+            // weeklyMission 생성
+            weeklyMission = WeeklyMission.builder()
+                    .user(user)
+                    .runningCount(0)
+                    .missionStatus1(false)
+                    .missionStatus2(false)
+                    .missionStatus3(false)
+                    .missionStatus4(false)
+                    .flag1(false)
+                    .flag2(false)
+                    .flag3(false)
+                    .flag4(false)
+                    .build();
+
+            // 업적 생성
+            achievement = Achievement.builder()
+                    .user(user)
+                    .achievementStatus1(false)
+                    .achievementStatus2(false)
+                    .achievementStatus3(false)
+                    .achievementStatus4(false)
+                    .achievementStatus5(false)
+                    .achievementStatus6(false)
+                    .achievementStatus7(false)
+                    .achievementStatus8(false)
+                    .achievementStatus9(false)
+                    .achievementStatus10(false)
+                    .achievementStatus11(false)
+                    .achievementStatus12(false)
+                    .achievementStatus13(false)
+                    .flag1(false)
+                    .flag2(false)
+                    .flag3(false)
+                    .flag4(false)
+                    .flag5(false)
+                    .flag6(false)
+                    .flag7(false)
+                    .flag8(false)
+                    .flag9(false)
+                    .flag10(false)
+                    .flag11(false)
+                    .flag12(false)
+                    .flag13(false)
+                    .build();
+
+            // DailyMission 생성
+            dailyMission = DailyMission.builder()
+                    .user(user)
+                    .missionStatus1(false) // 초기 상태는 미션 미완료
+                    .missionStatus2(false)
+                    .missionStatus3(false)
+                    .missionStatus4(false)
+                    .flag1(false)
+                    .flag2(false)
+                    .flag3(false)
+                    .flag4(false)
+                    .dailyRunningTime(0)
+                    .dailyRunningDistance(0.0)
+                    .build();
+
+            dailyMissionRepository.save(dailyMission);
+            weeklyMissionRepository.save(weeklyMission);
+            achievementRepository.save(achievement);
             return savedUser;
         }
+
         return null;
     }
 

@@ -26,7 +26,6 @@ public class LoginController {
     private final MailSendService mailSendService;
     private final UserRepository userRepository;
     private final RedisUtil redisUtil;
-    private final StatisticRepository statisticRepository;
     private final GameCharacterService gameCharacterService;
 
 
@@ -40,7 +39,6 @@ public class LoginController {
         if (emailExists) {
             return ResponseEntity.status(400).body("이미 존재하는 이메일 입니다.");
         }
-
 
         // 이메일로 인증 코드 전송
         String authCode = mailSendService.joinEmail(emailRequestDto.getEmail());
