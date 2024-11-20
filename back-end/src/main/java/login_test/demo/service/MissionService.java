@@ -119,11 +119,8 @@ public class MissionService {
         Running running = runningRepository.findByUserId(userId);
         WeeklyMission weeklyMission = weeklyMissionRepository.findByUserId(userId);
 
-        if (running == null) {
-            return null; // 러닝 기록이 없으면 종료
-        }
-
-        double weeklyDistance = running.getDistance(); // 주간 거리
+        // Running이 없는 경우 주간 거리를 0으로 설정
+        double weeklyDistance = (running != null) ? running.getDistance() : 0.0;
 
         // 주간 거리 15km 미션 완료 조건
         if (weeklyDistance >= 15 && !weeklyMission.isMissionStatus1()) {
