@@ -1,4 +1,5 @@
 # Tamagorun-Back
+![Image](https://github.com/user-attachments/assets/13f4176d-4404-4434-99dc-5fe6e01a2b2b)
 
 
 ## 🏃프로젝트 소개
