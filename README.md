@@ -13,4 +13,5 @@
  - **장은지** : Design
 
 ## 📘ERD 설계
+![Image](https://github.com/user-attachments/assets/38d7cf9a-d274-4fad-a63e-d0713aaa49bf)
 
