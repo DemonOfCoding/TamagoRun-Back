@@ -17,7 +17,7 @@
 
 
 ## 📘ERD 설계
-![Image](https://github.com/user-attachments/assets/38d7cf9a-d274-4fad-a63e-d0713aaa49bf)
+![Image](https://github.com/user-attachments/assets/88ea469f-a336-4c2a-916e-150fcbff0595)
 
 
 ## 🚀기술 스택
