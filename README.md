@@ -42,5 +42,14 @@
 - **Dottable** 🎨
 - **Pixelable** 🖌
 
+## 🎨Design Character
+- ## 🐈‍⬛Creature
+
+
+- ## 🧍Human
+
+
+- ## 🌃 Undead
+
 
 
