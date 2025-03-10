@@ -10,7 +10,7 @@
 
 
 ## :accessibility: 팀
- - **황상환** : 리더, 기획, ios
+ - **황상환** : Leader, Planner, ios
  - **유성진** : Server
  - **김채민** : Server
  - **장은지** : Design
@@ -40,3 +40,6 @@
 - **Figma** ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white)
 - **Dottable** 🎨
 - **Pixelable** 🖌
+
+
+
